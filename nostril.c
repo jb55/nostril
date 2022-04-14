@@ -19,7 +19,7 @@
 
 #define HAS_CREATED_AT (1<<1)
 #define HAS_KIND (1<<2)
-#define HAS_ENVELOPE (1<<2)
+#define HAS_ENVELOPE (1<<3)
 
 struct key {
 	secp256k1_keypair pair;
