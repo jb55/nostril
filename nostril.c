@@ -254,7 +254,7 @@ static int generate_event_id(struct nostr_event *ev)
 		return 0;
 	}
 
-	fprintf(stderr, "commitment: '%.*s'\n", len, buf);
+	//fprintf(stderr, "commitment: '%.*s'\n", len, buf);
 	
 	sha256((struct sha256*)ev->id, buf, len);
 
