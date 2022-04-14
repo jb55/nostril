@@ -1,4 +1,5 @@
 
+CFLAGS = -Wall -O2
 OBJS = sha256.o nostril.o
 HEADERS = hex.h random.h config.h sha256.h
 
@@ -6,10 +7,10 @@ all: nostril
 
 %.o: %.c config.h
 	@echo "cc $<"
-	@$(CC) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 nostril: $(HEADERS) $(OBJS)
-	$(CC) $(OBJS) -lsecp256k1 -o $@ 
+	$(CC) $(CFLAGS) $(OBJS) -lsecp256k1 -o $@ 
 
 config.h: configurator                                                          
 	./configurator > $@                                                     

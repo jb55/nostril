@@ -203,7 +203,6 @@ static int create_key(secp256k1_context *ctx, struct key *key, unsigned char sec
 static int decode_key(secp256k1_context *ctx, const char *secstr, struct key *key)
 {
 	unsigned char seckey[32];
-	int ok;
 
 	if (!hex_decode(secstr, strlen(secstr), seckey, 32)) {
 		fprintf(stderr, "could not hex decode secret key\n");
@@ -379,7 +378,6 @@ int main(int argc, const char *argv[])
 	struct nostr_event ev = {0};
 	struct key key;
         secp256k1_context *ctx;
-	int ok;
 
 	if (argc < 2)
 		usage();
