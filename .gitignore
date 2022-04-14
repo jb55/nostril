@@ -1,0 +1,8 @@
+*.o
+nostril
+configurator.out*
+configurator
+.build-result
+.buildcmd
+config.h
+tags
