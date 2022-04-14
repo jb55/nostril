@@ -4,6 +4,10 @@ HEADERS = hex.h random.h config.h sha256.h
 
 all: nostril
 
+%.o: %.c config.h
+	@echo "cc $<"
+	@$(CC) -c $< -o $@
+
 nostril: $(HEADERS) $(OBJS)
 	$(CC) $(OBJS) -lsecp256k1 -o $@ 
 
