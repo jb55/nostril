@@ -7,10 +7,13 @@
 #include <inttypes.h>
 
 #include <secp256k1.h>
+#include <secp256k1_ecdh.h>
 #include <secp256k1_schnorrsig.h>
 
 #include "cursor.h"
 #include "hex.h"
+#include "base64.h"
+#include "aes.h"
 #include "sha256.h"
 #include "random.h"
 
@@ -20,9 +23,11 @@
 #define HAS_CREATED_AT (1<<1)
 #define HAS_KIND (1<<2)
 #define HAS_ENVELOPE (1<<3)
+#define HAS_ENCRYPT (1<<4)
 
 struct key {
 	secp256k1_keypair pair;
+	unsigned char secret[32];
 	unsigned char pubkey[32];
 };
 
@@ -30,9 +35,10 @@ struct args {
 	unsigned int flags;
 	int kind;
 
+	unsigned char encrypt_to[32];
 	const char *sec;
 	const char *content;
-	
+
 	uint64_t created_at;
 };
 
@@ -184,13 +190,13 @@ static int make_sig(secp256k1_context *ctx, struct key *key,
 	return secp256k1_schnorrsig_sign(ctx, sig, id, &key->pair, aux);
 }
 
-static int create_key(secp256k1_context *ctx, struct key *key, unsigned char seckey[32])
+static int create_key(secp256k1_context *ctx, struct key *key)
 {
 	secp256k1_xonly_pubkey pubkey;
 
 	/* Try to create a keypair with a valid context, it should only
 	 * fail if the secret key is zero or out of range. */
-	if (!secp256k1_keypair_create(ctx, &key->pair, seckey))
+	if (!secp256k1_keypair_create(ctx, &key->pair, key->secret))
 		return 0;
 
 	if (!secp256k1_keypair_xonly_pub(ctx, &pubkey, NULL, &key->pair))
@@ -202,28 +208,24 @@ static int create_key(secp256k1_context *ctx, struct key *key, unsigned char sec
 
 static int decode_key(secp256k1_context *ctx, const char *secstr, struct key *key)
 {
-	unsigned char seckey[32];
-
-	if (!hex_decode(secstr, strlen(secstr), seckey, 32)) {
+	if (!hex_decode(secstr, strlen(secstr), key->secret, 32)) {
 		fprintf(stderr, "could not hex decode secret key\n");
 		return 0;
 	}
 
-	return create_key(ctx, key, seckey);
+	return create_key(ctx, key);
 }
 
 static int generate_key(secp256k1_context *ctx, struct key *key)
 {
-	unsigned char seckey[32];
-
 	/* If the secret key is zero or out of range (bigger than secp256k1's
 	 * order), we try to sample a new key. Note that the probability of this
 	 * happening is negligible. */
-	if (!fill_random(seckey, sizeof(seckey))) {
+	if (!fill_random(key->secret, sizeof(key->secret))) {
 		return 0;
 	}
 
-	return create_key(ctx, key, seckey);
+	return create_key(ctx, key);
 }
 
 
@@ -254,7 +256,7 @@ static int generate_event_id(struct nostr_event *ev)
 	}
 
 	//fprintf(stderr, "commitment: '%.*s'\n", len, buf);
-	
+
 	sha256((struct sha256*)ev->id, buf, len);
 
 	return 1;
@@ -262,10 +264,8 @@ static int generate_event_id(struct nostr_event *ev)
 
 static int sign_event(secp256k1_context *ctx, struct key *key, struct nostr_event *ev)
 {
-	if (!make_sig(ctx, key, ev->id, ev->sig)) {
-		fprintf(stderr, "Signature generation failed\n");
+	if (!make_sig(ctx, key, ev->id, ev->sig))
 		return 0;
-	}
 
 	return 1;
 }
@@ -309,7 +309,7 @@ static int print_event(struct nostr_event *ev, int envelope)
 		printf("]");
 
 	printf("\n");
-	
+
 	return 1;
 }
 
@@ -327,7 +327,7 @@ static void make_event_from_args(struct nostr_event *ev, struct args *args)
 
 static int parse_num(const char *arg, uint64_t *t)
 {
-	*t = strtol(arg, NULL, 10); 
+	*t = strtol(arg, NULL, 10);
 	return errno != EINVAL;
 }
 
@@ -363,11 +363,156 @@ static int parse_args(int argc, const char *argv[], struct args *args)
 			args->flags |= HAS_KIND;
 		} else if (!strcmp(arg, "--envelope")) {
 			args->flags |= HAS_ENVELOPE;
+		} else if (!strcmp(arg, "--dm")) {
+			arg = *argv++; argc--;
+			if (!hex_decode(arg, strlen(arg), args->encrypt_to, 32)) {
+				fprintf(stderr, "could not decode encrypt-to pubkey");
+				return 0;
+			}
+			args->flags |= HAS_ENCRYPT;
 		} else if (!strncmp(arg, "--", 2)) {
 			fprintf(stderr, "unknown argument: %s\n", arg);
 			return 0;
 		}
 	}
+
+	return 1;
+}
+
+static int nostr_add_tag(struct nostr_event *ev, const char *t1, const char *t2)
+{
+	struct nostr_tag *tag;
+
+	if (ev->num_tags + 1 > MAX_TAGS)
+		return 0;
+
+	tag = &ev->tags[ev->num_tags++];
+	tag->strs[0] = t1;
+	tag->strs[1] = t2;
+	tag->num_elems = 2;
+	return 1;
+}
+
+static int aes_encrypt(unsigned char *key, unsigned char *iv,
+		unsigned char *buf, size_t buflen)
+{
+	struct AES_ctx ctx;
+	unsigned char padding;
+	int i;
+	struct cursor cur;
+
+	padding = 16 - (buflen % 16);
+	make_cursor(buf, buf + buflen + padding, &cur);
+	cur.p += buflen;
+	//fprintf(stderr, "aes_encrypt: len %ld, padding %d\n", buflen, padding);
+
+	for (i = 0; i < padding; i++) {
+		if (!cursor_push_byte(&cur, padding)) {
+			return 0;
+		}
+	}
+	assert(cur.p == cur.end);
+	assert((cur.p - cur.start) % 16 == 0);
+
+	AES_init_ctx_iv(&ctx, key, iv);
+	//fprintf(stderr, "encrypting %ld bytes: ", cur.p - cur.start);
+	//print_hex(cur.start, cur.p - cur.start);
+	AES_CBC_encrypt_buffer(&ctx, cur.start, cur.p - cur.start);
+
+	return cur.p - cur.start;
+}
+
+static int copyx(unsigned char *output, const unsigned char *x32, const unsigned char *y32, void *data) {
+	memcpy(output, x32, 32);
+	return 1;
+}
+
+static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
+		struct nostr_event *ev, unsigned char nostr_pubkey[32])
+{
+	size_t inl = strlen(ev->content);
+	int enclen = inl + 16;
+	size_t buflen = enclen * 3 + 65 * 10;
+	unsigned char *buf = malloc(buflen);
+	unsigned char shared_secret[32];
+	unsigned char iv[16];
+	unsigned char compressed_pubkey[33];
+	int content_len = strlen(ev->content);
+	unsigned char encbuf[content_len + (content_len % 16) + 1];
+	struct cursor cur;
+	secp256k1_pubkey pubkey;
+
+	compressed_pubkey[0] = 2;
+	memcpy(&compressed_pubkey[1], nostr_pubkey, 32);
+
+	make_cursor(buf, buf + buflen, &cur);
+
+        if (!secp256k1_ec_seckey_verify(ctx, key->secret)) {
+		fprintf(stderr, "make_encrypted_dm: ec_seckey_verify failed\n");
+		return 0;
+	}
+
+	if (!secp256k1_ec_pubkey_parse(ctx, &pubkey, compressed_pubkey, sizeof(compressed_pubkey))) {
+		fprintf(stderr, "make_encrypted_dm: ec_pubkey_parse failed\n");
+		return 0;
+	}
+
+	if (!secp256k1_ecdh(ctx, shared_secret, &pubkey, key->secret, copyx, NULL)) {
+		fprintf(stderr, "make_encrypted_dm: secp256k1_ecdh failed\n");
+		return 0;
+	}
+
+	if (!fill_random(iv, sizeof(iv))) {
+		fprintf(stderr, "make_encrypted_dm: fill_random failed\n");
+		return 0;
+	}
+
+	fprintf(stderr, "shared secret: ");
+	print_hex(shared_secret, 32);
+
+	memcpy(encbuf, ev->content, strlen(ev->content));
+	enclen = aes_encrypt(shared_secret, iv, encbuf, strlen(ev->content));
+	if (enclen == 0) {
+		fprintf(stderr, "make_encrypted_dm: aes_encrypt failed\n");
+		free(buf);
+		free(encbuf);
+		return 0;
+	}
+
+	if ((enclen = base64_encode((char *)buf, buflen, (const char*)encbuf, enclen)) == -1) {
+		fprintf(stderr, "make_encrypted_dm: base64 encode of encrypted fata failed\n");
+		return 0;
+	}
+	cur.p += enclen;
+
+	if (!cursor_push_str(&cur, "?iv=")) {
+		fprintf(stderr, "make_encrypted_dm: buffer too small\n");
+		return 0;
+	}
+
+	if ((enclen = base64_encode((char *)cur.p, cur.end - cur.p, (const char*)iv, 16)) == -1) {
+		fprintf(stderr, "make_encrypted_dm: base64 encode of iv failed\n");
+		return 0;
+	}
+	cur.p += enclen;
+
+	if (!cursor_push_byte(&cur, 0)) {
+		fprintf(stderr, "make_encrypted_dm: out of memory by 1 byte!\n");
+		return 0;
+	}
+
+	ev->content = (const char*)cur.start;
+	ev->kind = 4;
+
+	if (!hex_encode(nostr_pubkey, 32, (char*)cur.p, cur.end - cur.p))
+		return 0;
+
+	if (!nostr_add_tag(ev, "p", (const char*)cur.p)) {
+		fprintf(stderr, "too many tags\n");
+		return 0;
+	}
+
+	cur.p += 65;
 
 	return 1;
 }
@@ -396,8 +541,15 @@ int main(int argc, const char *argv[])
 		}
 	} else {
 		if (!generate_key(ctx, &key)) {
-			fprintf(stderr, "could not generate key");
+			fprintf(stderr, "could not generate key\n");
 			return 4;
+		}
+	}
+
+	if (args.flags & HAS_ENCRYPT) {
+		if (!make_encrypted_dm(ctx, &key, &ev, args.encrypt_to)) {
+			fprintf(stderr, "error making encrypted dm\n");
+			return 0;
 		}
 	}
 

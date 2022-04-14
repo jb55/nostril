@@ -65,9 +65,8 @@ static int fill_random(unsigned char* data, size_t size) {
 
 static void print_hex(unsigned char* data, size_t size) {
     size_t i;
-    printf("0x");
     for (i = 0; i < size; i++) {
-        printf("%02x", data[i]);
+        fprintf(stderr, "%02x", data[i]);
     }
-    printf("\n");
+    fprintf(stderr, "\n");
 }
