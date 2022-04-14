@@ -4,7 +4,7 @@ HEADERS = hex.h random.h config.h sha256.h
 
 all: nostril
 
-nostril: config.h $(OBJS)
+nostril: $(HEADERS) $(OBJS)
 	$(CC) $(OBJS) -lsecp256k1 -o $@ 
 
 config.h: configurator                                                          
