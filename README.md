@@ -3,6 +3,12 @@
 
 A cli util for creating nostr events
 
+    TODO: support for tags, encrypted messages
+
+## Dependenices
+
+`libsecp256k1` is the only dependency
+
 ## Examples
 
 Generate an event:
