@@ -3,7 +3,7 @@
 
 A cli util for creating nostr events
 
-    TODO: support for tags, encrypted messages
+    TODO: support for adding tags from the cli
 
 ## Dependenices
 
