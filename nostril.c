@@ -63,7 +63,15 @@ struct nostr_event {
 
 void usage()
 {
-	printf("usage: nostril <content>\n");
+	printf("usage: nostril [OPTIONS] <content>\n");
+	printf("\n");
+	printf("  OPTIONS\n");
+	printf("\n");
+	printf("      --dm <hex pubkey>               make an encrypted dm to said pubkey. sets kind and tags.\n");
+	printf("      --envelope                      wrap in [\"EVENT\",...] for easy relaying\n");
+	printf("      --kind <number>                 set kind\n");
+	printf("      --created-at <unix timestamp>   set a specific created-at time\n");
+	printf("      --sec <hex seckey>              set the secret key for signing, otherwise one will be randomly generated\n");
 	exit(1);
 }
 
@@ -340,6 +348,10 @@ static int parse_args(int argc, const char *argv[], struct args *args)
 	for (; argc; ) {
 		arg = *argv++; argc--;
 		if (!argc) {
+			if (!strncmp(arg, "--", 2)) {
+				fprintf(stderr, "unexpected argument '%s'\n", arg);
+				return 0;
+			}
 			args->content = arg;
 			return 1;
 		}
@@ -467,7 +479,7 @@ static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
 		return 0;
 	}
 
-	fprintf(stderr, "shared secret: ");
+	fprintf(stderr, "shared_secret ");
 	print_hex(shared_secret, 32);
 
 	memcpy(encbuf, ev->content, strlen(ev->content));
@@ -530,8 +542,10 @@ int main(int argc, const char *argv[])
         if (!init_secp_context(&ctx))
 		return 2;
 
-	if (!parse_args(argc, argv, &args))
+	if (!parse_args(argc, argv, &args)) {
+		usage();
 		return 10;
+	}
 
 	make_event_from_args(&ev, &args);
 
@@ -544,6 +558,8 @@ int main(int argc, const char *argv[])
 			fprintf(stderr, "could not generate key\n");
 			return 4;
 		}
+		fprintf(stderr, "secret_key ");
+		print_hex(key.secret, sizeof(key.secret));
 	}
 
 	if (args.flags & HAS_ENCRYPT) {
