@@ -44,4 +44,7 @@ Send to a relay:
 
     $ ./nostril --envelope --sec <key> "this is a message" | websocat wss://nostr-pub.wellorder.net
 
+Send a nip04 DM:
+
+    $ ./nostril --envelope --dm <pubkey> --sec <key> "this is a secret" | websocat wss://nostr-pub.wellorder.net
 
