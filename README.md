@@ -12,14 +12,15 @@ A cli util for creating nostr events
 ## Usage
 
     usage: nostril [OPTIONS] <content>
-
+    
       OPTIONS
-
+    
           --dm <hex pubkey>               make an encrypted dm to said pubkey. sets kind and tags.
           --envelope                      wrap in ["EVENT",...] for easy relaying
           --kind <number>                 set kind
           --created-at <unix timestamp>   set a specific created-at time
           --sec <hex seckey>              set the secret key for signing, otherwise one will be randomly generated
+          --pow <difficulty>              number of leading 0 bits of the id to mine
 
 ## Examples
 
