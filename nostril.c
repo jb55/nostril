@@ -16,6 +16,7 @@
 #include "aes.h"
 #include "sha256.h"
 #include "random.h"
+#include "proof.h"
 
 #define MAX_TAGS 32
 #define MAX_TAG_ELEMS 16
@@ -24,6 +25,7 @@
 #define HAS_KIND (1<<2)
 #define HAS_ENVELOPE (1<<3)
 #define HAS_ENCRYPT (1<<4)
+#define HAS_DIFFICULTY (1<<5)
 
 struct key {
 	secp256k1_keypair pair;
@@ -34,6 +36,7 @@ struct key {
 struct args {
 	unsigned int flags;
 	int kind;
+	int difficulty;
 
 	unsigned char encrypt_to[32];
 	const char *sec;
@@ -72,6 +75,7 @@ void usage()
 	printf("      --kind <number>                 set kind\n");
 	printf("      --created-at <unix timestamp>   set a specific created-at time\n");
 	printf("      --sec <hex seckey>              set the secret key for signing, otherwise one will be randomly generated\n");
+	printf("      --pow <difficulty>              number of leading 0 bits of the id to mine\n");
 	exit(1);
 }
 
@@ -375,6 +379,14 @@ static int parse_args(int argc, const char *argv[], struct args *args)
 			args->flags |= HAS_KIND;
 		} else if (!strcmp(arg, "--envelope")) {
 			args->flags |= HAS_ENVELOPE;
+		} else if (!strcmp(arg, "--pow")) {
+			arg = *argv++; argc--;
+			if (!parse_num(arg, &n)) {
+				fprintf(stderr, "could not parse difficulty as number: '%s'\n", arg);
+				return 0;
+			}
+			args->difficulty = n;
+			args->flags |= HAS_DIFFICULTY;
 		} else if (!strcmp(arg, "--dm")) {
 			arg = *argv++; argc--;
 			if (!hex_decode(arg, strlen(arg), args->encrypt_to, 32)) {
@@ -437,6 +449,53 @@ static int aes_encrypt(unsigned char *key, unsigned char *iv,
 static int copyx(unsigned char *output, const unsigned char *x32, const unsigned char *y32, void *data) {
 	memcpy(output, x32, 32);
 	return 1;
+}
+
+static int ensure_nonce_tag(struct nostr_event *ev, int *index)
+{
+	struct nostr_tag *tag;
+	int i;
+
+	for (i = 0; i < ev->num_tags; i++) {
+		tag = &ev->tags[i];
+		if (tag->num_elems == 2 && !strcmp(tag->strs[0], "nonce")) {
+			*index = i;
+			return 1;
+		}
+	}
+
+	*index = ev->num_tags;
+	return nostr_add_tag(ev, "nonce", "0");
+}
+
+static int mine_event(struct nostr_event *ev, int difficulty)
+{
+	char *strnonce = malloc(33);
+	struct nostr_tag *tag;
+	uint64_t nonce;
+	int index, res;
+
+	if (!ensure_nonce_tag(ev, &index))
+		return 0;
+
+	tag = &ev->tags[index];
+	assert(tag->num_elems == 2);
+	assert(!strcmp(tag->strs[0], "nonce"));
+	tag->strs[1] = strnonce;
+
+	for (nonce = 0;; nonce++) {
+		snprintf(strnonce, 32, "%" PRIu64, nonce);
+
+		if (!generate_event_id(ev))
+			return 0;
+
+		if ((res = count_leading_zero_bits(ev->id)) >= difficulty) {
+			fprintf(stderr, "mined %d bits\n", res);
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
@@ -572,9 +631,16 @@ int main(int argc, const char *argv[])
 	// set the event's pubkey
 	memcpy(ev.pubkey, key.pubkey, 32);
 
-	if (!generate_event_id(&ev)) {
-		fprintf(stderr, "could not generate event id\n");
-		return 5;
+	if (args.flags & HAS_DIFFICULTY) {
+		if (!mine_event(&ev, args.difficulty)) {
+			fprintf(stderr, "error when mining id\n");
+			return 22;
+		}
+	} else {
+		if (!generate_event_id(&ev)) {
+			fprintf(stderr, "could not generate event id\n");
+			return 5;
+		}
 	}
 
 	if (!sign_event(ctx, &key, &ev)) {
