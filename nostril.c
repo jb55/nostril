@@ -40,6 +40,7 @@ struct args {
 
 	unsigned char encrypt_to[32];
 	const char *sec;
+	const char *tags;
 	const char *content;
 
 	uint64_t created_at;
@@ -59,6 +60,8 @@ struct nostr_event {
 
 	uint64_t created_at;
 	int kind;
+
+	const char *explicit_tags;
 
 	struct nostr_tag tags[MAX_TAGS];
 	int num_tags;
@@ -138,6 +141,10 @@ static int cursor_push_tag(struct cursor *cur, struct nostr_tag *tag)
 static int cursor_push_tags(struct cursor *cur, struct nostr_event *ev)
 {
         int i;
+
+	if (ev->explicit_tags) {
+		return cursor_push_str(cur, ev->explicit_tags);
+	}
 
         if (!cursor_push_byte(cur, '['))
                 return 0;
@@ -258,7 +265,7 @@ static int init_secp_context(secp256k1_context **ctx)
 
 static int generate_event_id(struct nostr_event *ev)
 {
-	static unsigned char buf[32000];
+	static unsigned char buf[102400];
 
 	int len;
 
@@ -284,7 +291,7 @@ static int sign_event(secp256k1_context *ctx, struct key *key, struct nostr_even
 
 static int print_event(struct nostr_event *ev, int envelope)
 {
-	unsigned char buf[32000];
+	unsigned char buf[102400];
 	char pubkey[65];
 	char id[65];
 	char sig[129];
@@ -379,6 +386,9 @@ static int parse_args(int argc, const char *argv[], struct args *args)
 			args->flags |= HAS_KIND;
 		} else if (!strcmp(arg, "--envelope")) {
 			args->flags |= HAS_ENVELOPE;
+		} else if (!strcmp(arg, "--tags")) {
+			arg = *argv++; argc--;
+			args->tags = arg;
 		} else if (!strcmp(arg, "--pow")) {
 			arg = *argv++; argc--;
 			if (!parse_num(arg, &n)) {
@@ -604,6 +614,10 @@ int main(int argc, const char *argv[])
 	if (!parse_args(argc, argv, &args)) {
 		usage();
 		return 10;
+	}
+
+	if (args.tags) {
+		ev.explicit_tags = args.tags;
 	}
 
 	make_event_from_args(&ev, &args);
