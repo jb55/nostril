@@ -79,6 +79,7 @@ void usage()
 	printf("      --created-at <unix timestamp>   set a specific created-at time\n");
 	printf("      --sec <hex seckey>              set the secret key for signing, otherwise one will be randomly generated\n");
 	printf("      --pow <difficulty>              number of leading 0 bits of the id to mine\n");
+	printf("      --tag <key> <value>             add a tag\n");
 	exit(1);
 }
 
@@ -334,11 +335,6 @@ static int print_event(struct nostr_event *ev, int envelope)
 
 static void make_event_from_args(struct nostr_event *ev, struct args *args)
 {
-	ev->tags[0].strs[0] = "tag";
-	ev->tags[0].strs[1] = "a";
-	ev->tags[0].num_elems = 2;
-	ev->num_tags = 0;
-
 	ev->created_at = args->flags & HAS_CREATED_AT? args->created_at : time(NULL);
 	ev->content = args->content;
 	ev->kind = 1;
@@ -350,10 +346,26 @@ static int parse_num(const char *arg, uint64_t *t)
 	return errno != EINVAL;
 }
 
-static int parse_args(int argc, const char *argv[], struct args *args)
+static int nostr_add_tag(struct nostr_event *ev, const char *t1, const char *t2)
 {
-	const char *arg;
+	struct nostr_tag *tag;
+
+	if (ev->num_tags + 1 > MAX_TAGS)
+		return 0;
+
+	tag = &ev->tags[ev->num_tags++];
+	tag->strs[0] = t1;
+	tag->strs[1] = t2;
+	tag->num_elems = 2;
+	return 1;
+}
+
+
+static int parse_args(int argc, const char *argv[], struct args *args, struct nostr_event *ev)
+{
+	const char *arg, *arg2;
 	uint64_t n;
+	int has_added_tags = 0;
 
 	argv++; argc--;
 	for (; argc; ) {
@@ -387,9 +399,37 @@ static int parse_args(int argc, const char *argv[], struct args *args)
 		} else if (!strcmp(arg, "--envelope")) {
 			args->flags |= HAS_ENVELOPE;
 		} else if (!strcmp(arg, "--tags")) {
+			if (args->flags & HAS_DIFFICULTY) {
+				fprintf(stderr, "can't combine --tags and --pow (yet)\n");
+				return 0;
+			}
+			if (has_added_tags) {
+				fprintf(stderr, "can't combine --tags and --tag (yet)");
+				return 0;
+			}
 			arg = *argv++; argc--;
 			args->tags = arg;
+		} else if (!strcmp(arg, "--tag")) {
+			has_added_tags = 1;
+			if (args->tags) {
+				fprintf(stderr, "can't combine --tag and --tags (yet)");
+				return 0;
+			}
+			arg = *argv++; argc--;
+			if (argc < 2) {
+				fprintf(stderr, "expected two arguments to --tag\n");
+				return 0;
+			}
+			arg2 = *argv++; argc--;
+			if (!nostr_add_tag(ev, arg, arg2)) {
+				fprintf(stderr, "couldn't add tag '%s' '%s'\n", arg, arg2);
+				return 0;
+			}
 		} else if (!strcmp(arg, "--pow")) {
+			if (args->tags) {
+				fprintf(stderr, "can't combine --tags and --pow (yet)\n");
+				return 0;
+			}
 			arg = *argv++; argc--;
 			if (!parse_num(arg, &n)) {
 				fprintf(stderr, "could not parse difficulty as number: '%s'\n", arg);
@@ -410,20 +450,6 @@ static int parse_args(int argc, const char *argv[], struct args *args)
 		}
 	}
 
-	return 1;
-}
-
-static int nostr_add_tag(struct nostr_event *ev, const char *t1, const char *t2)
-{
-	struct nostr_tag *tag;
-
-	if (ev->num_tags + 1 > MAX_TAGS)
-		return 0;
-
-	tag = &ev->tags[ev->num_tags++];
-	tag->strs[0] = t1;
-	tag->strs[1] = t2;
-	tag->num_elems = 2;
 	return 1;
 }
 
@@ -611,7 +637,7 @@ int main(int argc, const char *argv[])
         if (!init_secp_context(&ctx))
 		return 2;
 
-	if (!parse_args(argc, argv, &args)) {
+	if (!parse_args(argc, argv, &args, &ev)) {
 		usage();
 		return 10;
 	}
