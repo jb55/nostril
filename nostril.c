@@ -69,7 +69,7 @@ struct nostr_event {
 
 void usage()
 {
-	printf("usage: nostril [OPTIONS] <content>\n");
+	printf("usage: nostril [OPTIONS] --content <content>\n");
 	printf("\n");
 	printf("  OPTIONS\n");
 	printf("\n");
@@ -80,6 +80,8 @@ void usage()
 	printf("      --sec <hex seckey>              set the secret key for signing, otherwise one will be randomly generated\n");
 	printf("      --pow <difficulty>              number of leading 0 bits of the id to mine\n");
 	printf("      --tag <key> <value>             add a tag\n");
+	printf("      -e <event_id>                   shorthand for --tag e <event_id>\n");
+	printf("      -p <pubkey>                     shorthand for --tag p <pubkey>\n");
 	exit(1);
 }
 
@@ -371,12 +373,8 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 	for (; argc; ) {
 		arg = *argv++; argc--;
 		if (!argc) {
-			if (!strncmp(arg, "--", 2)) {
-				fprintf(stderr, "unexpected argument '%s'\n", arg);
-				return 0;
-			}
-			args->content = arg;
-			return 1;
+			fprintf(stderr, "expected argument: '%s'\n", arg);
+			return 0;
 		}
 
 		if (!strcmp(arg, "--sec")) {
@@ -409,6 +407,20 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 			}
 			arg = *argv++; argc--;
 			args->tags = arg;
+		} else if (!strcmp(arg, "-e")) {
+			has_added_tags = 1;
+			arg = *argv++; argc--;
+			if (!nostr_add_tag(ev, "e", arg)) {
+				fprintf(stderr, "couldn't add e tag");
+				return 0;
+			}
+		} else if (!strcmp(arg, "-p")) {
+			has_added_tags = 1;
+			arg = *argv++; argc--;
+			if (!nostr_add_tag(ev, "p", arg)) {
+				fprintf(stderr, "couldn't add p tag");
+				return 0;
+			}
 		} else if (!strcmp(arg, "--tag")) {
 			has_added_tags = 1;
 			if (args->tags) {
@@ -416,7 +428,7 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 				return 0;
 			}
 			arg = *argv++; argc--;
-			if (argc < 2) {
+			if (argc == 0) {
 				fprintf(stderr, "expected two arguments to --tag\n");
 				return 0;
 			}
@@ -444,10 +456,18 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 				return 0;
 			}
 			args->flags |= HAS_ENCRYPT;
-		} else if (!strncmp(arg, "--", 2)) {
-			fprintf(stderr, "unknown argument: %s\n", arg);
+		} else if (!strcmp(arg, "--content")) {
+			arg = *argv++; argc--;
+			args->content = arg;
+		} else {
+			fprintf(stderr, "unexpected argument '%s'\n", arg);
 			return 0;
 		}
+	}
+
+	if (!args->content) {
+		fprintf(stderr, "expected --content\n");
+		return 0;
 	}
 
 	return 1;
