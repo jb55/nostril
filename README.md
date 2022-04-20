@@ -21,6 +21,7 @@ A cli util for creating nostr events
           --created-at <unix timestamp>   set a specific created-at time
           --sec <hex seckey>              set the secret key for signing, otherwise one will be randomly generated
           --pow <difficulty>              number of leading 0 bits of the id to mine
+          --tag <key> <value>             add a tag
 
 ## Examples
 
