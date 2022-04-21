@@ -1,5 +1,8 @@
 *.o
+/.direnv/
+.envrc
 nostril
+/result
 configurator.out*
 configurator
 .build-result
