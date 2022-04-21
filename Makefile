@@ -12,6 +12,10 @@ all: nostril
 nostril: $(HEADERS) $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -lsecp256k1 -o $@ 
 
+install: nostril
+	mkdir -p $(PREFIX)/bin
+	cp nostril $(PREFIX)/bin
+
 config.h: configurator                                                          
 	./configurator > $@                                                     
 
