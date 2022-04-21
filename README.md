@@ -3,8 +3,6 @@
 
 A cli util for creating nostr events
 
-    TODO: support for adding tags from the cli
-
 ## Dependenices
 
 `libsecp256k1` is the only dependency

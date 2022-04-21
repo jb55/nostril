@@ -339,7 +339,7 @@ static void make_event_from_args(struct nostr_event *ev, struct args *args)
 {
 	ev->created_at = args->flags & HAS_CREATED_AT? args->created_at : time(NULL);
 	ev->content = args->content;
-	ev->kind = 1;
+	ev->kind = args->flags & HAS_KIND ? args->kind : 1;
 }
 
 static int parse_num(const char *arg, uint64_t *t)
@@ -388,6 +388,7 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 				args->flags |= HAS_CREATED_AT;
 			}
 		} else if (!strcmp(arg, "--kind")) {
+			arg = *argv++; argc--;
 			if (!parse_num(arg, &n)) {
 				fprintf(stderr, "kind should be a number, got '%s'\n", arg);
 				return 0;
