@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+websocat "$@" wss://nostr-pub.wellorder.net

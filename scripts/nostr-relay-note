@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+jq -c '["EVENT",.]' | websocat wss://nostr-pub.wellorder.net

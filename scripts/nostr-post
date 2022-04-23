@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -e
+
+TMP=$(mktemp)
+
+$EDITOR "$TMP"
+
+if [ ! -f "$TMP" ]; then
+	printf "could not create temporary file\n" >&2
+	exit 1
+fi
+
+content="$(cat $TMP)"
+
+re="^[[:space:]]*$" 
+if [[ "$content" =~ $re ]]; then
+	printf "note empty. aborting.\n" >&2
+	exit 2
+fi
+
+note=$(nostril "$@" --content "$content")
+
+printf "relaying:\n" >&2
+printf "$note\n"
+<<<"$note" nostr-relay-note
+printf "done.\n" >&2
+
+rm -f "$TMP"
