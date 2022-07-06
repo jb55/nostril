@@ -27,10 +27,10 @@
  * Other fields may be added to the union in future.
  */
 struct sha256 {
-	union {
-		uint32_t u32[8];
-		unsigned char u8[32];
-	} u;
+    union {
+        uint32_t u32[8];
+        unsigned char u8[32];
+    } u;
 };
 
 /**
@@ -42,21 +42,21 @@ struct sha256 {
  * The bytes pointed to by @p is SHA256 hashed into @sha256.  This is
  * equivalent to sha256_init(), sha256_update() then sha256_done().
  */
-void sha256(struct sha256 *sha, const void *p, size_t size);
+void sha256(struct sha256* sha, const void* p, size_t size);
 
 /**
  * struct sha256_ctx - structure to store running context for sha256
  */
 struct sha256_ctx {
 #ifdef CCAN_CRYPTO_SHA256_USE_OPENSSL
-	SHA256_CTX c;
+    SHA256_CTX c;
 #else
-	uint32_t s[8];
-	union {
-		uint32_t u32[16];
-		unsigned char u8[64];
-	} buf;
-	size_t bytes;
+    uint32_t s[8];
+    union {
+        uint32_t u32[16];
+        unsigned char u8[64];
+    } buf;
+    size_t bytes;
 #endif
 };
 
@@ -82,7 +82,7 @@ struct sha256_ctx {
  *	sha256_done(&ctx, hash);
  * }
  */
-void sha256_init(struct sha256_ctx *ctx);
+void sha256_init(struct sha256_ctx* ctx);
 
 /**
  * SHA256_INIT - initializer for an SHA256 context.
@@ -102,17 +102,23 @@ void sha256_init(struct sha256_ctx *ctx);
  * }
  */
 #ifdef CCAN_CRYPTO_SHA256_USE_OPENSSL
-#define SHA256_INIT							\
-	{ { { 0x6a09e667ul, 0xbb67ae85ul, 0x3c6ef372ul, 0xa54ff53aul,	\
-	      0x510e527ful, 0x9b05688cul, 0x1f83d9abul, 0x5be0cd19ul }, \
-		0x0, 0x0,						\
-		{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },	\
-			0x0, 0x20 } }
+#define SHA256_INIT                                                   \
+    {                                                                 \
+        {                                                             \
+            {0x6a09e667ul, 0xbb67ae85ul, 0x3c6ef372ul, 0xa54ff53aul,  \
+             0x510e527ful, 0x9b05688cul, 0x1f83d9abul, 0x5be0cd19ul}, \
+                0x0, 0x0,                                             \
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},     \
+                0x0, 0x20                                             \
+        }                                                             \
+    }
 #else
-#define SHA256_INIT							\
-	{ { 0x6a09e667ul, 0xbb67ae85ul, 0x3c6ef372ul, 0xa54ff53aul,	\
-	    0x510e527ful, 0x9b05688cul, 0x1f83d9abul, 0x5be0cd19ul },	\
-	  { { 0 } }, 0 }
+#define SHA256_INIT                                               \
+    {                                                             \
+        {0x6a09e667ul, 0xbb67ae85ul, 0x3c6ef372ul, 0xa54ff53aul,  \
+         0x510e527ful, 0x9b05688cul, 0x1f83d9abul, 0x5be0cd19ul}, \
+            {{0}}, 0                                              \
+    }
 #endif
 
 /**
@@ -124,7 +130,7 @@ void sha256_init(struct sha256_ctx *ctx);
  * You can call this multiple times to hash more data, before calling
  * sha256_done().
  */
-void sha256_update(struct sha256_ctx *ctx, const void *p, size_t size);
+void sha256_update(struct sha256_ctx* ctx, const void* p, size_t size);
 
 /**
  * sha256_done - finish SHA256 and return the hash
@@ -134,22 +140,22 @@ void sha256_update(struct sha256_ctx *ctx, const void *p, size_t size);
  * Note that @ctx is *destroyed* by this, and must be reinitialized.
  * To avoid that, pass a copy instead.
  */
-void sha256_done(struct sha256_ctx *sha256, struct sha256 *res);
+void sha256_done(struct sha256_ctx* sha256, struct sha256* res);
 
 /* Add various types to an SHA256 hash */
-void sha256_u8(struct sha256_ctx *ctx, uint8_t v);
-void sha256_u16(struct sha256_ctx *ctx, uint16_t v);
-void sha256_u32(struct sha256_ctx *ctx, uint32_t v);
-void sha256_u64(struct sha256_ctx *ctx, uint64_t v);
+void sha256_u8(struct sha256_ctx* ctx, uint8_t v);
+void sha256_u16(struct sha256_ctx* ctx, uint16_t v);
+void sha256_u32(struct sha256_ctx* ctx, uint32_t v);
+void sha256_u64(struct sha256_ctx* ctx, uint64_t v);
 
 /* Add as little-endian */
-void sha256_le16(struct sha256_ctx *ctx, uint16_t v);
-void sha256_le32(struct sha256_ctx *ctx, uint32_t v);
-void sha256_le64(struct sha256_ctx *ctx, uint64_t v);
+void sha256_le16(struct sha256_ctx* ctx, uint16_t v);
+void sha256_le32(struct sha256_ctx* ctx, uint32_t v);
+void sha256_le64(struct sha256_ctx* ctx, uint64_t v);
 
 /* Add as big-endian */
-void sha256_be16(struct sha256_ctx *ctx, uint16_t v);
-void sha256_be32(struct sha256_ctx *ctx, uint32_t v);
-void sha256_be64(struct sha256_ctx *ctx, uint64_t v);
+void sha256_be16(struct sha256_ctx* ctx, uint16_t v);
+void sha256_be32(struct sha256_ctx* ctx, uint32_t v);
+void sha256_be64(struct sha256_ctx* ctx, uint64_t v);
 
 #endif /* CCAN_CRYPTO_SHA256_H */

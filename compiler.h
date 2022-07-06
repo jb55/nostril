@@ -2,10 +2,10 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
+#include "config.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include "config.h"
 
 #if HAVE_UNALIGNED_ACCESS
 #define alignment_ok(p, n) 1
@@ -32,8 +32,10 @@
  *		return (char *)foo;
  *	}
  */
-#define BUILD_ASSERT(cond) \
-	do { (void) sizeof(char [1 - 2*!(cond)]); } while(0)
+#define BUILD_ASSERT(cond)                   \
+    do {                                     \
+        (void)sizeof(char[1 - 2 * !(cond)]); \
+    } while (0)
 
 /**
  * BUILD_ASSERT_OR_ZERO - assert a build-time dependency, as an expression.
@@ -48,16 +50,25 @@
  *		  + BUILD_ASSERT_OR_ZERO(offsetof(struct foo, string) == 0))
  */
 #define BUILD_ASSERT_OR_ZERO(cond) \
-	(sizeof(char [1 - 2*!(cond)]) - 1)
+    (sizeof(char[1 - 2 * !(cond)]) - 1)
 
 #define memclear(mem, size) memset(mem, 0, size)
-#define memclear_2(m1, s1, m2, s2) { memclear(m1, s1); memclear(m2, s2); }
-#define memclear_3(m1, s1, m2, s2, m3, s3) { memclear(m1, s1); memclear(m2, s2); memclear(m3, s3); }
+#define memclear_2(m1, s1, m2, s2) \
+    {                              \
+        memclear(m1, s1);          \
+        memclear(m2, s2);          \
+    }
+#define memclear_3(m1, s1, m2, s2, m3, s3) \
+    {                                      \
+        memclear(m1, s1);                  \
+        memclear(m2, s2);                  \
+        memclear(m3, s3);                  \
+    }
 
-static inline void *memcheck_(const void *data, size_t len)
+static inline void* memcheck_(const void* data, size_t len)
 {
-	(void)len;
-	return (void *)data;
+    (void)len;
+    return (void*)data;
 }
 
 #if HAVE_TYPEOF
@@ -77,7 +88,7 @@ static inline void *memcheck_(const void *data, size_t len)
  *		printf("space was found!\n");
  *	}
  */
-#define memcheck(data, len) ((__typeof__((data)+0))memcheck_((data), (len)))
+#define memcheck(data, len) ((__typeof__((data) + 0))memcheck_((data), (len)))
 #else
 #define memcheck(data, len) memcheck_((data), (len))
 #endif

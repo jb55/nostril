@@ -17,9 +17,9 @@
  */
 
 #if defined(_WIN32)
-#include <windows.h>
-#include <ntstatus.h>
 #include <bcrypt.h>
+#include <ntstatus.h>
+#include <windows.h>
 #elif defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 #include <sys/random.h>
 #elif defined(__OpenBSD__)
@@ -28,13 +28,14 @@
 #error "Couldn't identify the OS"
 #endif
 
-#include <stddef.h>
 #include <limits.h>
+#include <stddef.h>
 #include <stdio.h>
 
 
 /* Returns 1 on success, and 0 on failure. */
-static int fill_random(unsigned char* data, size_t size) {
+static int fill_random(unsigned char* data, size_t size)
+{
 #if defined(_WIN32)
     NTSTATUS res = BCryptGenRandom(NULL, data, size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
     if (res != STATUS_SUCCESS || size > ULONG_MAX) {
@@ -45,7 +46,7 @@ static int fill_random(unsigned char* data, size_t size) {
 #elif defined(__linux__) || defined(__FreeBSD__)
     /* If `getrandom(2)` is not available you should fallback to /dev/urandom */
     ssize_t res = getrandom(data, size, 0);
-    if (res < 0 || (size_t)res != size ) {
+    if (res < 0 || (size_t)res != size) {
         return 0;
     } else {
         return 1;
@@ -63,7 +64,8 @@ static int fill_random(unsigned char* data, size_t size) {
     return 0;
 }
 
-static void print_hex(unsigned char* data, size_t size) {
+static void print_hex(unsigned char* data, size_t size)
+{
     size_t i;
     for (i = 0; i < size; i++) {
         fprintf(stderr, "%02x", data[i]);
