@@ -14,17 +14,17 @@ all: nostril
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 nostril: $(HEADERS) $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -lsecp256k1 -o $@ 
+	$(CC) $(CFLAGS) $(OBJS) -lsecp256k1 -o $@
 
 install: nostril
 	mkdir -p $(PREFIX)/bin
 	cp nostril $(PREFIX)
 	cp scripts/* $(PREFIX)/
 
-config.h: configurator                                                          
-	./configurator > $@                                                     
+config.h: configurator
+	./configurator > $@
 
-configurator: configurator.c                                                    
+configurator: configurator.c
 	$(CC) $< -o $@
 
 clean:
