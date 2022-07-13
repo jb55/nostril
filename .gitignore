@@ -1,6 +1,6 @@
 *.o
 /.direnv/
-.envrc
+.privenv
 nostril
 /result
 configurator.out*
