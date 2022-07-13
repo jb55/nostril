@@ -2,6 +2,7 @@
 CFLAGS = -Wall -Og
 OBJS = sha256.o nostril.o aes.o base64.o
 HEADERS = hex.h random.h config.h sha256.h
+PREFIX ?= /usr/local
 
 all: nostril
 
