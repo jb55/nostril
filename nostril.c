@@ -556,7 +556,7 @@ static int mine_event(struct nostr_event *ev, int difficulty)
 }
 
 static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
-		struct nostr_event *ev, unsigned char nostr_pubkey[32])
+		struct nostr_event *ev, unsigned char nostr_pubkey[32], int kind)
 {
 	size_t inl = strlen(ev->content);
 	int enclen = inl + 16;
@@ -630,7 +630,7 @@ static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
 	}
 
 	ev->content = (const char*)cur.start;
-	ev->kind = 4;
+	ev->kind = kind;
 
 	if (!hex_encode(nostr_pubkey, 32, (char*)cur.p, cur.end - cur.p))
 		return 0;
@@ -683,7 +683,8 @@ int main(int argc, const char *argv[])
 	}
 
 	if (args.flags & HAS_ENCRYPT) {
-		if (!make_encrypted_dm(ctx, &key, &ev, args.encrypt_to)) {
+		int kind = args.flags & HAS_KIND? args.kind : 4;
+		if (!make_encrypted_dm(ctx, &key, &ev, args.encrypt_to, kind)) {
 			fprintf(stderr, "error making encrypted dm\n");
 			return 0;
 		}
