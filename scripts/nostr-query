@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-websocat "$@" wss://nostr-pub.wellorder.net
+websocat "$@" wss://relay.damus.io
