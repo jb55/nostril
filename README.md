@@ -3,10 +3,6 @@
 
 A cli util for creating nostr events
 
-## Dependenices
-
-`libsecp256k1` is the only dependency
-
 ## Usage
 
     usage: nostril [OPTIONS] --content <content>

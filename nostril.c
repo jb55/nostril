@@ -6,9 +6,9 @@
 #include <errno.h>
 #include <inttypes.h>
 
-#include <secp256k1.h>
-#include <secp256k1_ecdh.h>
-#include <secp256k1_schnorrsig.h>
+#include "secp256k1.h"
+#include "secp256k1_ecdh.h"
+#include "secp256k1_schnorrsig.h"
 
 #include "cursor.h"
 #include "hex.h"
@@ -209,7 +209,7 @@ static int make_sig(secp256k1_context *ctx, struct key *key,
 		return 0;
 	}
 
-	return secp256k1_schnorrsig_sign(ctx, sig, id, &key->pair, aux);
+	return secp256k1_schnorrsig_sign32(ctx, sig, id, &key->pair, aux);
 }
 
 static int create_key(secp256k1_context *ctx, struct key *key)
@@ -348,18 +348,28 @@ static int parse_num(const char *arg, uint64_t *t)
 	return errno != EINVAL;
 }
 
-static int nostr_add_tag(struct nostr_event *ev, const char *t1, const char *t2)
+static int nostr_add_tag_n(struct nostr_event *ev, const char **ts, int n_ts)
 {
+	int i;
 	struct nostr_tag *tag;
 
 	if (ev->num_tags + 1 > MAX_TAGS)
 		return 0;
 
 	tag = &ev->tags[ev->num_tags++];
-	tag->strs[0] = t1;
-	tag->strs[1] = t2;
-	tag->num_elems = 2;
+
+	tag->num_elems = n_ts;
+	for (i = 0; i < n_ts; i++) {
+		tag->strs[i] = ts[i];
+	}
+
 	return 1;
+}
+
+static int nostr_add_tag(struct nostr_event *ev, const char *t1, const char *t2)
+{
+	const char *ts[] = {t1, t2};
+	return nostr_add_tag_n(ev, ts, 2);
 }
 
 
@@ -508,8 +518,9 @@ static int copyx(unsigned char *output, const unsigned char *x32, const unsigned
 	return 1;
 }
 
-static int ensure_nonce_tag(struct nostr_event *ev, int *index)
+static int ensure_nonce_tag(struct nostr_event *ev, int target, int *index)
 {
+	char *str_target = malloc(8);
 	struct nostr_tag *tag;
 	int i;
 
@@ -522,7 +533,11 @@ static int ensure_nonce_tag(struct nostr_event *ev, int *index)
 	}
 
 	*index = ev->num_tags;
-	return nostr_add_tag(ev, "nonce", "0");
+
+	snprintf(str_target, 7, "%d", target);
+	const char *ts[] = { "nonce", "0", str_target };
+
+	return nostr_add_tag_n(ev, ts, 3);
 }
 
 static int mine_event(struct nostr_event *ev, int difficulty)
@@ -532,11 +547,11 @@ static int mine_event(struct nostr_event *ev, int difficulty)
 	uint64_t nonce;
 	int index, res;
 
-	if (!ensure_nonce_tag(ev, &index))
+	if (!ensure_nonce_tag(ev, difficulty, &index))
 		return 0;
 
 	tag = &ev->tags[index];
-	assert(tag->num_elems == 2);
+	assert(tag->num_elems == 3);
 	assert(!strcmp(tag->strs[0], "nonce"));
 	tag->strs[1] = strnonce;
 
@@ -556,7 +571,7 @@ static int mine_event(struct nostr_event *ev, int difficulty)
 }
 
 static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
-		struct nostr_event *ev, unsigned char nostr_pubkey[32])
+		struct nostr_event *ev, unsigned char nostr_pubkey[32], int kind)
 {
 	size_t inl = strlen(ev->content);
 	int enclen = inl + 16;
@@ -603,7 +618,6 @@ static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
 	if (enclen == 0) {
 		fprintf(stderr, "make_encrypted_dm: aes_encrypt failed\n");
 		free(buf);
-		free(encbuf);
 		return 0;
 	}
 
@@ -630,7 +644,7 @@ static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
 	}
 
 	ev->content = (const char*)cur.start;
-	ev->kind = 4;
+	ev->kind = kind;
 
 	if (!hex_encode(nostr_pubkey, 32, (char*)cur.p, cur.end - cur.p))
 		return 0;
@@ -683,7 +697,8 @@ int main(int argc, const char *argv[])
 	}
 
 	if (args.flags & HAS_ENCRYPT) {
-		if (!make_encrypted_dm(ctx, &key, &ev, args.encrypt_to)) {
+		int kind = args.flags & HAS_KIND? args.kind : 4;
+		if (!make_encrypted_dm(ctx, &key, &ev, args.encrypt_to, kind)) {
 			fprintf(stderr, "error making encrypted dm\n");
 			return 0;
 		}
