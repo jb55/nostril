@@ -6,9 +6,9 @@
 #include <errno.h>
 #include <inttypes.h>
 
-#include <secp256k1.h>
-#include <secp256k1_ecdh.h>
-#include <secp256k1_schnorrsig.h>
+#include "secp256k1.h"
+#include "secp256k1_ecdh.h"
+#include "secp256k1_schnorrsig.h"
 
 #include "cursor.h"
 #include "hex.h"
@@ -209,7 +209,7 @@ static int make_sig(secp256k1_context *ctx, struct key *key,
 		return 0;
 	}
 
-	return secp256k1_schnorrsig_sign(ctx, sig, id, &key->pair, aux);
+	return secp256k1_schnorrsig_sign32(ctx, sig, id, &key->pair, aux);
 }
 
 static int create_key(secp256k1_context *ctx, struct key *key)
@@ -603,7 +603,6 @@ static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
 	if (enclen == 0) {
 		fprintf(stderr, "make_encrypted_dm: aes_encrypt failed\n");
 		free(buf);
-		free(encbuf);
 		return 0;
 	}
 
