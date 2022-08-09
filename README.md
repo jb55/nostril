@@ -5,10 +5,11 @@ A cli util for creating nostr events
 
 ## Usage
 
-    usage: nostril [OPTIONS] --content <content>
+    usage: nostril [OPTIONS]
     
       OPTIONS
     
+          --content                       the content of the note
           --dm <hex pubkey>               make an encrypted dm to said pubkey. sets kind and tags.
           --envelope                      wrap in ["EVENT",...] for easy relaying
           --kind <number>                 set kind

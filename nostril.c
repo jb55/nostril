@@ -69,10 +69,11 @@ struct nostr_event {
 
 void usage()
 {
-	printf("usage: nostril [OPTIONS] --content <content>\n");
+	printf("usage: nostril [OPTIONS]\n");
 	printf("\n");
 	printf("  OPTIONS\n");
 	printf("\n");
+	printf("      --content <string>              the content of the note\n");
 	printf("      --dm <hex pubkey>               make an encrypted dm to said pubkey. sets kind and tags.\n");
 	printf("      --envelope                      wrap in [\"EVENT\",...] for easy relaying\n");
 	printf("      --kind <number>                 set kind\n");
@@ -476,10 +477,8 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 		}
 	}
 
-	if (!args->content) {
-		fprintf(stderr, "expected --content\n");
-		return 0;
-	}
+	if (!args->content)
+		args->content = "";
 
 	return 1;
 }
