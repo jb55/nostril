@@ -6,7 +6,9 @@ PREFIX ?= /usr/local
 ARS = libsecp256k1.a
 
 SUBMODULES = deps/secp256k1
-
+-:
+	git submodule update --init
+	$(MAKE) all
 all: nostril
 
 deps/secp256k1/.git:
