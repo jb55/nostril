@@ -24,7 +24,7 @@ A cli util for creating nostr events
 
 Generate an event:
 
-    $ ./nostril --sec <key> "this is a message"
+    $ ./nostril --sec <key> --content "this is a message"
     {
       "id": "b5c18a4aa21231a77b09748a5e623d9c2f853aed09653934b80a10b66a7225fa",
       "pubkey": "fd3fdb0d0d8d6f9a7667b53211de8ae3c5246b79bdaf64ebac849d5148b5615f",
@@ -37,7 +37,7 @@ Generate an event:
 
 Wrap event to send to a relay:
 
-    $ ./nostril --envelope --sec <key> "hello"
+    $ ./nostril --envelope --sec <key> --content "hello"
     [
       "EVENT",
       {
@@ -53,9 +53,9 @@ Wrap event to send to a relay:
 
 Send to a relay:
 
-    $ ./nostril --envelope --sec <key> "this is a message" | websocat wss://nostr-pub.wellorder.net
+    $ ./nostril --envelope --sec <key> --content "this is a message" | websocat wss://nostr-pub.wellorder.net
 
 Send a nip04 DM:
 
-    $ ./nostril --envelope --dm <pubkey> --sec <key> "this is a secret" | websocat wss://nostr-pub.wellorder.net
+    $ ./nostril --envelope --dm <pubkey> --sec <key> --content "this is a secret" | websocat wss://nostr-pub.wellorder.net
 
