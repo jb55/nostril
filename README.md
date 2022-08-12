@@ -1,6 +1,8 @@
 
 # nostril
 
+Cool nostr patch demo!
+
 A cli util for creating nostr events
 
 ## Usage
