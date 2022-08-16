@@ -53,9 +53,9 @@ Wrap event to send to a relay:
 
 Send to a relay:
 
-    $ ./nostril --envelope --sec <key> --content "this is a message" | websocat wss://nostr-pub.wellorder.net
+    $ ./nostril --envelope --sec <key> --content "this is a message" | websocat wss://relay.damus.io
 
 Send a nip04 DM:
 
-    $ ./nostril --envelope --dm <pubkey> --sec <key> --content "this is a secret" | websocat wss://nostr-pub.wellorder.net
+    $ ./nostril --envelope --dm <pubkey> --sec <key> --content "this is a secret" | websocat wss://relay.damus.io
 
