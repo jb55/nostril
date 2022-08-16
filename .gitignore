@@ -9,3 +9,11 @@ configurator
 .buildcmd
 config.h
 tags
+
+#Xcode
+## User settings
+xcuserdata/
+
+## Xcode 8 and earlier
+*.xcscmblueprint
+*.xccheckout

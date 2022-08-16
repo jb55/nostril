@@ -1,0 +1,420 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4B0C189528AC5C6C0036A8ED /* secp256k1 in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0C189428AC5C6C0036A8ED /* secp256k1 */; };
+		4B4387A728AC4DEB006258C4 /* aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B43878428AC4D2B006258C4 /* aes.c */; };
+		4B4387A828AC4DEB006258C4 /* aes.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43878228AC4D2B006258C4 /* aes.h */; };
+		4B4387A928AC4DEB006258C4 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B43879428AC4D2B006258C4 /* base64.c */; };
+		4B4387AA28AC4DEB006258C4 /* base64.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43877E28AC4D2B006258C4 /* base64.h */; };
+		4B4387AB28AC4DEB006258C4 /* compiler.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43878128AC4D2B006258C4 /* compiler.h */; };
+		4B4387AC28AC4DEB006258C4 /* config.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43878628AC4D2B006258C4 /* config.h */; };
+		4B4387AE28AC4DEB006258C4 /* cursor.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43879828AC4D2C006258C4 /* cursor.h */; };
+		4B4387AF28AC4DEB006258C4 /* endian.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43878F28AC4D2B006258C4 /* endian.h */; };
+		4B4387B028AC4DEB006258C4 /* hex.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43878B28AC4D2B006258C4 /* hex.h */; };
+		4B4387B228AC4DEB006258C4 /* proof.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43878A28AC4D2B006258C4 /* proof.h */; };
+		4B4387B328AC4DEB006258C4 /* random.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43879228AC4D2B006258C4 /* random.h */; };
+		4B4387B528AC4DEB006258C4 /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B43879B28AC4D2C006258C4 /* sha256.c */; };
+		4B4387B628AC4DEB006258C4 /* sha256.h in Sources */ = {isa = PBXBuildFile; fileRef = 4B43879C28AC4D2C006258C4 /* sha256.h */; };
+		4B4387BD28AC5179006258C4 /* nostril.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B43879928AC4D2C006258C4 /* nostril.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4B43874B28AC46EB006258C4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4B43874D28AC46EB006258C4 /* nostril */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nostril; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B43877E28AC4D2B006258C4 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		4B43878128AC4D2B006258C4 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
+		4B43878228AC4D2B006258C4 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
+		4B43878328AC4D2B006258C4 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4B43878428AC4D2B006258C4 /* aes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes.c; sourceTree = "<group>"; };
+		4B43878628AC4D2B006258C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		4B43878A28AC4D2B006258C4 /* proof.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = proof.h; sourceTree = "<group>"; };
+		4B43878B28AC4D2B006258C4 /* hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hex.h; sourceTree = "<group>"; };
+		4B43878F28AC4D2B006258C4 /* endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		4B43879228AC4D2B006258C4 /* random.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = random.h; sourceTree = "<group>"; };
+		4B43879428AC4D2B006258C4 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
+		4B43879828AC4D2C006258C4 /* cursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cursor.h; sourceTree = "<group>"; };
+		4B43879928AC4D2C006258C4 /* nostril.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nostril.c; sourceTree = "<group>"; };
+		4B43879B28AC4D2C006258C4 /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
+		4B43879C28AC4D2C006258C4 /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha256.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4B43874A28AC46EB006258C4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B0C189528AC5C6C0036A8ED /* secp256k1 in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4B43874428AC46EB006258C4 = {
+			isa = PBXGroup;
+			children = (
+				4B43878428AC4D2B006258C4 /* aes.c */,
+				4B43878228AC4D2B006258C4 /* aes.h */,
+				4B43879428AC4D2B006258C4 /* base64.c */,
+				4B43877E28AC4D2B006258C4 /* base64.h */,
+				4B43878128AC4D2B006258C4 /* compiler.h */,
+				4B43878628AC4D2B006258C4 /* config.h */,
+				4B43879828AC4D2C006258C4 /* cursor.h */,
+				4B43878F28AC4D2B006258C4 /* endian.h */,
+				4B43878B28AC4D2B006258C4 /* hex.h */,
+				4B43879928AC4D2C006258C4 /* nostril.c */,
+				4B43878A28AC4D2B006258C4 /* proof.h */,
+				4B43879228AC4D2B006258C4 /* random.h */,
+				4B43878328AC4D2B006258C4 /* README.md */,
+				4B43879B28AC4D2C006258C4 /* sha256.c */,
+				4B43879C28AC4D2C006258C4 /* sha256.h */,
+				4B43874E28AC46EB006258C4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4B43874E28AC46EB006258C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4B43874D28AC46EB006258C4 /* nostril */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		4B4387B928AC4FE5006258C4 /* configurator */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "configurator.c -o configurator";
+			buildConfigurationList = 4B4387BA28AC4FE5006258C4 /* Build configuration list for PBXLegacyTarget "configurator" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/gcc;
+			buildWorkingDirectory = /Users/Shared/nostril;
+			dependencies = (
+			);
+			name = configurator;
+			passBuildSettingsInEnvironment = 1;
+			productName = configurator;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXNativeTarget section */
+		4B43874C28AC46EB006258C4 /* nostril */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B43875428AC46EB006258C4 /* Build configuration list for PBXNativeTarget "nostril" */;
+			buildPhases = (
+				4B43874928AC46EB006258C4 /* Sources */,
+				4B43874A28AC46EB006258C4 /* Frameworks */,
+				4B43874B28AC46EB006258C4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = nostril;
+			packageProductDependencies = (
+				4B0C189428AC5C6C0036A8ED /* secp256k1 */,
+			);
+			productName = nostril;
+			productReference = 4B43874D28AC46EB006258C4 /* nostril */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4B43874528AC46EB006258C4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1340;
+				TargetAttributes = {
+					4B43874C28AC46EB006258C4 = {
+						CreatedOnToolsVersion = 13.4.1;
+					};
+					4B4387B928AC4FE5006258C4 = {
+						CreatedOnToolsVersion = 13.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 4B43874828AC46EB006258C4 /* Build configuration list for PBXProject "nostril" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4B43874428AC46EB006258C4;
+			packageReferences = (
+				4B0C189328AC5C6C0036A8ED /* XCRemoteSwiftPackageReference "secp256k1.swift" */,
+			);
+			productRefGroup = 4B43874E28AC46EB006258C4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4B43874C28AC46EB006258C4 /* nostril */,
+				4B4387B928AC4FE5006258C4 /* configurator */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4B43874928AC46EB006258C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B4387A728AC4DEB006258C4 /* aes.c in Sources */,
+				4B4387A828AC4DEB006258C4 /* aes.h in Sources */,
+				4B4387A928AC4DEB006258C4 /* base64.c in Sources */,
+				4B4387AA28AC4DEB006258C4 /* base64.h in Sources */,
+				4B4387AB28AC4DEB006258C4 /* compiler.h in Sources */,
+				4B4387AC28AC4DEB006258C4 /* config.h in Sources */,
+				4B4387BD28AC5179006258C4 /* nostril.c in Sources */,
+				4B4387AE28AC4DEB006258C4 /* cursor.h in Sources */,
+				4B4387AF28AC4DEB006258C4 /* endian.h in Sources */,
+				4B4387B028AC4DEB006258C4 /* hex.h in Sources */,
+				4B4387B228AC4DEB006258C4 /* proof.h in Sources */,
+				4B4387B328AC4DEB006258C4 /* random.h in Sources */,
+				4B4387B528AC4DEB006258C4 /* sha256.c in Sources */,
+				4B4387B628AC4DEB006258C4 /* sha256.h in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4B43875228AC46EB006258C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4B43875328AC46EB006258C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4B43875528AC46EB006258C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = M684FYCYG6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4B43875628AC46EB006258C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = M684FYCYG6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4B4387BB28AC4FE5006258C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = M684FYCYG6;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4B4387BC28AC4FE5006258C4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = M684FYCYG6;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4B43874828AC46EB006258C4 /* Build configuration list for PBXProject "nostril" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B43875228AC46EB006258C4 /* Debug */,
+				4B43875328AC46EB006258C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B43875428AC46EB006258C4 /* Build configuration list for PBXNativeTarget "nostril" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B43875528AC46EB006258C4 /* Debug */,
+				4B43875628AC46EB006258C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B4387BA28AC4FE5006258C4 /* Build configuration list for PBXLegacyTarget "configurator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B4387BB28AC4FE5006258C4 /* Debug */,
+				4B4387BC28AC4FE5006258C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B0C189328AC5C6C0036A8ED /* XCRemoteSwiftPackageReference "secp256k1.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/GigaBitcoin/secp256k1.swift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B0C189428AC5C6C0036A8ED /* secp256k1 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0C189328AC5C6C0036A8ED /* XCRemoteSwiftPackageReference "secp256k1.swift" */;
+			productName = secp256k1;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 4B43874528AC46EB006258C4 /* Project object */;
+}
