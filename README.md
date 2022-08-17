@@ -26,13 +26,13 @@ Generate an event:
 
     $ ./nostril --sec <key> --content "this is a message"
     {
-      "id": "b5c18a4aa21231a77b09748a5e623d9c2f853aed09653934b80a10b66a7225fa",
-      "pubkey": "fd3fdb0d0d8d6f9a7667b53211de8ae3c5246b79bdaf64ebac849d5148b5615f",
-      "created_at": 1649948031,
+      "id": "da9c36bb8206e748cf136af2a43613a5ee113cb5906a09a8d3df5386039d53ab",
+      "pubkey": "4f6fa8547cf2888415522918175ea0bc0eb473287c5bd7cc459ca440bdf87d97",
+      "created_at": 1660750302,
       "kind": 1,
       "tags": [],
-      "content": "testing something again",
-      "sig": "5122b2fc0d9a1f1ca134e4ab6fc1c9e5795e2d558cf24e3c7d8c4a35f889130eebcbd604602092a89c8a48469e88753e08dabb472610ac628ec9db3aa6c24672"
+      "content": "this is a message",
+      "sig": "3e4d7d93522e54f201a22944d4d37eb4505ef1cf91c278a3f7d312b772a6c6509d1e11f146d5a003265ae10411a20057bade2365501872d2f2f24219730eed87"
     }
 
 Wrap event to send to a relay:
