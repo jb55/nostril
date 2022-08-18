@@ -5,6 +5,19 @@ Cool nostr patch demo!
 
 A cli util for creating nostr events
 
+## Installation
+
+### Fedora
+
+```bash
+$ sudo dnf install libtool automake
+$ make
+
+# Optional - install to system PATH
+
+$ sudo make install
+```
+
 ## Usage
 
     usage: nostril [OPTIONS]
