@@ -26,6 +26,7 @@
 #define HAS_ENVELOPE (1<<3)
 #define HAS_ENCRYPT (1<<4)
 #define HAS_DIFFICULTY (1<<5)
+#define HAS_MINE_PUBKEY (1<<6)
 
 struct key {
 	secp256k1_keypair pair;
@@ -239,7 +240,7 @@ static int decode_key(secp256k1_context *ctx, const char *secstr, struct key *ke
 	return create_key(ctx, key);
 }
 
-static int generate_key(secp256k1_context *ctx, struct key *key)
+static int generate_key(secp256k1_context *ctx, struct key *key, int *difficulty)
 {
 	/* If the secret key is zero or out of range (bigger than secp256k1's
 	 * order), we try to sample a new key. Note that the probability of this
@@ -248,7 +249,20 @@ static int generate_key(secp256k1_context *ctx, struct key *key)
 		return 0;
 	}
 
-	return create_key(ctx, key);
+	if (difficulty == NULL) {
+		return create_key(ctx, key);
+	}
+
+	while (1) {
+		if (!fill_random(key->secret, sizeof(key->secret)))
+			continue;
+
+		if (!create_key(ctx, key))
+			return 0;
+
+		if (count_leading_zero_bits(key->pubkey) >= *difficulty)
+			return 1;
+	}
 }
 
 
@@ -449,6 +463,8 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 				fprintf(stderr, "couldn't add tag '%s' '%s'\n", arg, arg2);
 				return 0;
 			}
+		} else if (!strcmp(arg, "--mine-pubkey")) {
+			args->flags |= HAS_MINE_PUBKEY;
 		} else if (!strcmp(arg, "--pow")) {
 			if (args->tags) {
 				fprintf(stderr, "can't combine --tags and --pow (yet)\n");
@@ -687,7 +703,12 @@ int main(int argc, const char *argv[])
 			return 8;
 		}
 	} else {
-		if (!generate_key(ctx, &key)) {
+		int *difficulty = NULL;
+		if ((args.flags & HAS_DIFFICULTY) && (args.flags & HAS_MINE_PUBKEY)) {
+			difficulty = &args.difficulty;
+		}
+
+		if (!generate_key(ctx, &key, difficulty)) {
 			fprintf(stderr, "could not generate key\n");
 			return 4;
 		}
@@ -706,7 +727,7 @@ int main(int argc, const char *argv[])
 	// set the event's pubkey
 	memcpy(ev.pubkey, key.pubkey, 32);
 
-	if (args.flags & HAS_DIFFICULTY) {
+	if (args.flags & HAS_DIFFICULTY && !(args.flags & HAS_MINE_PUBKEY)) {
 		if (!mine_event(&ev, args.difficulty)) {
 			fprintf(stderr, "error when mining id\n");
 			return 22;
