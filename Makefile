@@ -1,5 +1,5 @@
 
-CFLAGS = -Wall -Og -Ideps/secp256k1/include
+CFLAGS = -Wall -O2 -Ideps/secp256k1/include
 OBJS = sha256.o nostril.o aes.o base64.o
 HEADERS = hex.h random.h config.h sha256.h deps/secp256k1/include/secp256k1.h
 PREFIX ?= /usr/local
