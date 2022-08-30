@@ -739,6 +739,7 @@ int main(int argc, const char *argv[])
 		}
 		fprintf(stderr, "secret_key ");
 		print_hex(key.secret, sizeof(key.secret));
+		fprintf(stderr, "\n");
 	}
 
 	if (args.flags & HAS_ENCRYPT) {
