@@ -240,8 +240,20 @@ static int decode_key(secp256k1_context *ctx, const char *secstr, struct key *ke
 	return create_key(ctx, key);
 }
 
+static inline void xor_mix(unsigned char *dest, const unsigned char *a, const unsigned char *b, int size)
+{
+    int i;
+    for (i = 0; i < size; i++)
+        dest[i] = a[i] ^ b[i];
+}
+
 static int generate_key(secp256k1_context *ctx, struct key *key, int *difficulty)
 {
+	uint64_t attempts = 0;
+	uint64_t duration;
+	double pers;
+	struct timespec t1, t2;
+
 	/* If the secret key is zero or out of range (bigger than secp256k1's
 	 * order), we try to sample a new key. Note that the probability of this
 	 * happening is negligible. */
@@ -253,16 +265,8 @@ static int generate_key(secp256k1_context *ctx, struct key *key, int *difficulty
 		return create_key(ctx, key);
 	}
 
-	uint64_t attempts = 0;
-	uint64_t duration;
-	double pers;
-	struct timespec t1, t2;
-
 	clock_gettime(CLOCK_MONOTONIC, &t1);
 	while (1) {
-		if (!fill_random(key->secret, sizeof(key->secret)))
-			continue;
-
 		if (!create_key(ctx, key))
 			return 0;
 
@@ -275,6 +279,14 @@ static int generate_key(secp256k1_context *ctx, struct key *key, int *difficulty
 			fprintf(stderr, "mined pubkey after %" PRIu64 " attempts, %" PRId64 " ms, %f attempts per ms\n", attempts, duration, pers);
 			return 1;
 		}
+
+		// NOTE: Get a new secret key by xor mixing the current secret
+		// key with the current public key. This doesn't rely on the
+		// system's crypto number generator so it should be fast. There
+		// shouldn't be any secret key entropy issues since we got a
+		// good source of entropy from the first fill_random call at
+		// the start of the function.
+		xor_mix(key->secret, key->secret, key->pubkey, 32);
 	}
 }
 
