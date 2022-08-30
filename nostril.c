@@ -251,6 +251,7 @@ static int generate_key(secp256k1_context *ctx, struct key *key, int *difficulty
 {
 	uint64_t attempts = 0;
 	uint64_t duration;
+	int bits;
 	double pers;
 	struct timespec t1, t2;
 
@@ -272,11 +273,11 @@ static int generate_key(secp256k1_context *ctx, struct key *key, int *difficulty
 
 		attempts++;
 
-		if (count_leading_zero_bits(key->pubkey) >= *difficulty) {
+		if ((bits = count_leading_zero_bits(key->pubkey)) >= *difficulty) {
 			clock_gettime(CLOCK_MONOTONIC, &t2);
 			duration = ((t2.tv_sec - t1.tv_sec) * 1e9L + (t2.tv_nsec - t1.tv_nsec)) / 1e6L;
 			pers = (double)attempts / (double)duration;
-			fprintf(stderr, "mined pubkey after %" PRIu64 " attempts, %" PRId64 " ms, %f attempts per ms\n", attempts, duration, pers);
+			fprintf(stderr, "mined pubkey with %d bits after %" PRIu64 " attempts, %" PRId64 " ms, %f attempts per ms\n", bits, attempts, duration, pers);
 			return 1;
 		}
 
