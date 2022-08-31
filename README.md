@@ -19,9 +19,9 @@ $ sudo make install
 ## Usage
 
     usage: nostril [OPTIONS]
-    
+
       OPTIONS
-    
+
           --content                       the content of the note
           --dm <hex pubkey>               make an encrypted dm to said pubkey. sets kind and tags.
           --envelope                      wrap in ["EVENT",...] for easy relaying
@@ -72,3 +72,10 @@ Send a nip04 DM:
 
     $ ./nostril --envelope --dm <pubkey> --sec <key> --content "this is a secret" | websocat wss://relay.damus.io
 
+Mine a pubkey:
+
+    $ ./nostril --mine-pubkey --pow <difficulty>
+
+Reply to an event. nip10 compliant, includes the `thread_id`:
+
+    $ ./nostril --envelope --sec <key> --content "this is reply message" --tag e <thread_id> --tag e <note_id> | websocat wss://relay.damus.io
