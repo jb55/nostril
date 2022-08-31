@@ -71,4 +71,11 @@ Send to a relay:
 Send a nip04 DM:
 
     $ ./nostril --envelope --dm <pubkey> --sec <key> --content "this is a secret" | websocat wss://relay.damus.io
+    
+Send a mine a pubkey:
 
+    $ ./nostril --mine-pubkey --pow <pow difficulty>
+ 
+ Reply to an event
+    
+    $ ./nostril --envelope --sec <key> --content "this is reply message" --tag e <note_id> | websocat wss://relay.damus.io
