@@ -1,0 +1,9 @@
+Fedora
+------
+
+$ sudo dnf install libtool automake
+$ make
+
+# Optional - install to system PATH
+
+$ sudo make install

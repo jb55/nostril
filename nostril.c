@@ -18,6 +18,8 @@
 #include "random.h"
 #include "proof.h"
 
+#define VERSION "0.1.0"
+
 #define MAX_TAGS 32
 #define MAX_TAG_ELEMS 16
 
@@ -425,6 +427,11 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 	argv++; argc--;
 	for (; argc; ) {
 		arg = *argv++; argc--;
+
+		if (!strcmp(arg, "--help")) {
+			usage();
+		}
+
 		if (!argc) {
 			fprintf(stderr, "expected argument: '%s'\n", arg);
 			return 0;

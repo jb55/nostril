@@ -9,8 +9,16 @@ configurator
 .buildcmd
 config.h
 tags
-
-
-# Added by cargo
-
+libsecp256k1.a
 /target
+
+Cargo.lock
+Cargo.toml
+doc/nostril.1
+*.json
+scripts/jb55-post
+scripts/nostr-follows
+scripts/nostr-req
+scripts/subnote
+/dist
+/version

@@ -7,7 +7,25 @@ ARS = libsecp256k1.a
 
 SUBMODULES = deps/secp256k1
 
-all: nostril
+all: nostril docs
+
+docs: doc/nostril.1
+
+doc/nostril.1: README.txt
+	scdoc < $^ > $@
+
+version: nostril.c
+	grep '^#define VERSION' $< | sed -En 's,.*"([^"]+)".*,\1,p' > $@
+
+dist: docs version
+	@mkdir -p dist
+	git archive HEAD --format tar.gz --prefix nostril-$(shell cat version)/ -o dist/nostril-$(shell cat version).tar.gz
+	@ls -dt dist/* | head -n1 | xargs echo "tgz "
+	cd dist;\
+	sha256sum *.tar.gz > SHA256SUMS.txt;\
+	gpg -u 0x8A478B64FFE30F1095A8736BF5F27EFD1B38DABB --sign --armor --detach-sig --output SHA256SUMS.txt.asc SHA256SUMS.txt
+	rsync -avzP dist/ charon:/www/cdn.jb55.com/tarballs/nostril/
+	scp CHANGELOG charon:/www/cdn.jb55.com/tarballs/nostril/CHANGELOG.txt
 
 deps/secp256k1/.git:
 	@devtools/refresh-submodules.sh $(SUBMODULES)
@@ -36,9 +54,9 @@ libsecp256k1.a: deps/secp256k1/.libs/libsecp256k1.a
 nostril: $(HEADERS) $(OBJS) $(ARS)
 	$(CC) $(CFLAGS) $(OBJS) $(ARS) -o $@
 
-install: nostril
-	mkdir -p $(PREFIX)/bin
-	cp nostril $(PREFIX)/bin
+install: all
+	install -Dm644 doc/nostril.1 $(PREFIX)/share/man/man1/nostril.1
+	install -Dm755 nostril $(PREFIX)/bin/nostril
 
 config.h: configurator
 	./configurator > $@
