@@ -19,7 +19,7 @@ version: nostril.c
 
 dist: docs version
 	@mkdir -p dist
-	git archive HEAD --format tar.gz --prefix nostril-$(shell cat version)/ -o dist/nostril-$(shell cat version).tar.gz
+	git ls-files --recurse-submodules | tar --transform 's/^/nostril-$(shell cat version)\//' -T- -caf dist/nostril-$(shell cat version).tar.gz
 	@ls -dt dist/* | head -n1 | xargs echo "tgz "
 	cd dist;\
 	sha256sum *.tar.gz > SHA256SUMS.txt;\
