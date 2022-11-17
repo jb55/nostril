@@ -9,3 +9,8 @@ configurator
 .buildcmd
 config.h
 tags
+
+
+# Added by cargo
+
+/target
