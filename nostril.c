@@ -85,6 +85,7 @@ void usage()
 	printf("      --tag <key> <value>             add a tag\n");
 	printf("      -e <event_id>                   shorthand for --tag e <event_id>\n");
 	printf("      -p <pubkey>                     shorthand for --tag p <pubkey>\n");
+	printf("      -t <hashtag>                    shorthand for --tag t <hashtag>\n");
 	exit(1);
 }
 
@@ -472,6 +473,13 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 			arg = *argv++; argc--;
 			if (!nostr_add_tag(ev, "p", arg)) {
 				fprintf(stderr, "couldn't add p tag");
+				return 0;
+			}
+		} else if (!strcmp(arg, "-t")) {
+			has_added_tags = 1;
+			arg = *argv++; argc--;
+			if (!nostr_add_tag(ev, "t", arg)) {
+				fprintf(stderr, "couldn't add t tag");
 				return 0;
 			}
 		} else if (!strcmp(arg, "--tag")) {
