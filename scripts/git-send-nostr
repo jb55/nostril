@@ -43,7 +43,7 @@ shift $((OPTIND-1))
 
 if [ -z $relay ]; then
 	relay=$(git config nostr.relays)
-	if [ $relay = "" ]; then
+	if [[ $relay == "" ]]; then
 		unset relay
 	fi
 fi
@@ -58,7 +58,7 @@ shift
 
 # this can be overridden
 sec="$(git config nostr.secretkey)"
-if [ $sec != "" ]; then
+if [[ $sec != "" ]]; then
 	sec="--sec $sec"
 fi
 
