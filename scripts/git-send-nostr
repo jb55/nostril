@@ -70,13 +70,17 @@ json=$(nostril --envelope $sec --kind 19691228 --tag author "$author" --tag subj
 id=$(jq -r '.[1].id' <<<"$json")
 
 if [ -n "$dryrun" ]; then
-	printf "DRY RUN. printing event data\n\n" >&2
 	echo "$json"
+	printf "\nDRY RUN. printing event data\n" >&2
 elif [ -z "$relay" ]; then
-	printf "RELAY NOT SET, not relaying.\n\n" >&2
 	echo "$json"
+	printf "\nRELAY NOT SET, not relaying. Use -r wss://relay.damus.io or 'git config --global nostr.relays wss://relay.damus.io'\n" >&2
 else
 	echo "$id"
 	printf "relaying to $relay using $NOSTR_RELAYER...\n" >&2
 	<<<$json $NOSTR_RELAYER "$relay"
+fi
+
+if [[ $sec == "" ]]; then
+	printf "NOSTR SECRET KEY NOT SET, using random key. Use --sec <key> or 'git config --global nostr.secretkey <hexkey>'\n" >&2
 fi
