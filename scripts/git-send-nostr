@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+NOSTR_RELAYER=${NOSTR_RELAYER:-nostcat}
+
+if ! command -v $NOSTR_RELAYER >&2 >/dev/null; then
+	printf "error: nostr relayer '%s' not found, set \$NOSTR_RELAYER or install '%s'\n" $NOSTR_RELAYER $NOSTR_RELAYER
+	exit 1
+fi
+
+usage() {
+	printf "usage: git-send-nostr [OPTIONS...] <commit> [NOSTRIL OPTIONS...]\n\n"
+
+	printf "OPTIONS\n\n"
+	printf "     -r            Relay to broadcast to. Will use 'git config nostr.relays' by default\n"
+	printf "     -d            Dry run. Just print event to stdout instead of relaying.\n"
+	printf "\n"
+	printf "     any other nostril option is supported here:\n\n"
+	printf "NOSTRIL OPTIONS\n"
+	nostril | sed '1,/OPTIONS/d'
+	printf "\nEXAMPLES\n\n"
+	printf "git send-nostr -d HEAD^- -t nostril -t nostrildev --pow 15\n\n"
+	exit 0
+}
+
+while getopts "dr:t:" o; do
+    case "${o}" in
+        r)
+            relay=${OPTARG}
+            ;;
+        t)
+            tag=${OPTARG}
+            ;;
+        d)
+            dryrun=1
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+
+if [ -z $relay ]; then
+	relay=$(git config nostr.relays)
+	if [ $relay = "" ]; then
+		unset relay
+	fi
+fi
+
+if [ -z $1 ]; then
+	usage
+	exit 0
+fi
+
+commit=$1
+shift
+
+# this can be overridden
+sec="$(git config nostr.secretkey)"
+if [ $sec != "" ]; then
+	sec="--sec $sec"
+fi
+
+patch="$(git format-patch --stdout $commit)"
+subject=$(<<<"$patch" grep "^Subject:"| head -n1 | sed 's,^Subject: ,,')
+author=$(<<<"$patch" grep "^From:"| head -n1 | sed 's,^From: ,,')
+json=$(nostril --envelope $sec --kind 19691228 --tag author "$author" --tag subject "$subject" --content "$patch" "$@")
+
+id=$(jq -r '.[1].id' <<<"$json")
+
+if [ -n "$dryrun" ]; then
+	printf "DRY RUN. printing event data\n\n" >&2
+	echo "$json"
+elif [ -z "$relay" ]; then
+	printf "RELAY NOT SET, not relaying.\n\n" >&2
+	echo "$json"
+else
+	echo "$id"
+	printf "relaying to $relay using $NOSTR_RELAYER...\n" >&2
+	<<<$json $NOSTR_RELAYER "$relay"
+fi

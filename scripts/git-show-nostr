@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+NOSTR_RELAYER=${NOSTR_RELAYER:-nostcat}
+FUZZER=${FUZZER:-fzf}
+
+if ! command -v $NOSTR_RELAYER >&2 >/dev/null; then
+	printf "error: nostr relayer '%s' not found, set \$NOSTR_RELAYER or install '%s'\n" $NOSTR_RELAYER $NOSTR_RELAYER
+	exit 1
+fi
+
+if ! command -v $FUZZER >&2 >/dev/null; then
+	printf "error: fuzzer '%s' not found, set \$FUZZER or install '%s'\n" $FUZZER $FUZZER
+	exit 1
+fi
+
+if ! command -v jq >&2 >/dev/null; then
+	printf "error: jq is required. please install. \n"
+	exit 1
+fi
+
+if ! command -v fzf >&2 >/dev/null; then
+	printf "error: fzf is required. please install. \n"
+	exit 1
+fi
+
+usage() {
+	printf "usage: git-show-nostr <-t tag OR id> [OPTIONS...]\n"
+	printf "\n"
+	printf "   -O         output patches to a local file.\n"
+	printf "   -o name    output patches to a local file with a specific filename.\n"
+	printf "   -l limit   Max number of results to return. defaults to 20.\n"
+	printf "   -t tag     Query a nostr tag.\n"
+	printf "   -r relay   nostr relay to query. Uses 'git config nostr.relays' option by default\n"
+	exit 0
+}
+
+if [ "$1" == "--help" ]; then
+	usage
+	exit 1
+fi
+
+limit=20
+while getopts "Oo:t:r:l:" o; do
+case "$o" in
+	O)
+		writeout=1
+		;;
+	o)
+		writeout=1
+		fname=$OPTARG
+		;;
+	r)
+		relay=$OPTARG
+		;;
+	t)
+		tag=$OPTARG
+		;;
+	l)
+		limit=$OPTARG
+		;;
+	*)
+		usage
+		;;
+esac
+done
+shift $((OPTIND-1))
+
+if [ -z $relay ]; then
+	relay="$(git config nostr.relays)"
+fi
+
+if [ -z $relay ]; then
+	usage
+	exit 0
+fi
+
+target=$tag
+query=""
+if [ -z $tag ]; then
+	target=$id
+	query=$(printf '"ids":["%s"],' $id)
+else
+	query=$(printf '"#t":["%s"],' $tag)
+fi
+
+fullquery=$(printf '["REQ","git-show-nostr",{"kinds":[19691228],%s"limit": %d}]\n' "$query" $limit)
+
+if [ -z $fname ]; then
+	target=${target:-all}
+	outname="nostr-patches-$target.json"
+else
+	outname=$fname
+fi
+
+if [ -z $writeout ]; then
+	outname=$(mktemp)
+fi
+
+echo "$fullquery" | $NOSTR_RELAYER $relay | jq -c '.[2]' > "$outname"
+
+if [ ! -z $writeout ]; then
+	printf "saved results to %s\n" "$outname" >&2
+fi
+
+pager="$(git config core.pager)"
+if [ ! -t 1 ]; then
+	pager=cat
+fi
+
+ev_count=$(wc -l < "$outname")
+if [ $ev_count = 1 ]; then
+	jq -r .content "$outname" | $pager
+	exit 1
+fi
+
+dateformatter=""
+if ! command -v datefmt >&2 >/dev/null; then
+	printf "install https://jb55.com/datefmt if you want nice relative timestamp formatting\n" >&2
+	dateformatter=cat
+else
+	dateformatter="datefmt --relative"
+fi
+
+evid=$(jq -r '
+def tag(name): .tags[] | select(.[0] == name) | .[1];
+
+. | [(.created_at | tostring), (.|tag("t")), (.|tag("author")), (.|tag("subject")), .pubkey[0:20], "id:\(.id)"] | @tsv' "$outname" |
+sort -rn |
+$dateformatter |
+column -t -s $'\t' |
+$FUZZER |
+sed -E -n 's,.*id:(.*)$,\1,p'
+)
+
+jq -r 'select(.id == "'$evid'") | .content' "$outname" | $pager
+
+if [ -z $writeout ]; then
+	rm -f "$outname"
+fi
