@@ -24,8 +24,8 @@ dist: docs version
 	cd dist;\
 	sha256sum *.tar.gz > SHA256SUMS.txt;\
 	gpg -u 0x8A478B64FFE30F1095A8736BF5F27EFD1B38DABB --sign --armor --detach-sig --output SHA256SUMS.txt.asc SHA256SUMS.txt
+	cp CHANGELOG dist/CHANGELOG.txt
 	rsync -avzP dist/ charon:/www/cdn.jb55.com/tarballs/nostril/
-	scp CHANGELOG charon:/www/cdn.jb55.com/tarballs/nostril/CHANGELOG.txt
 
 deps/secp256k1/.git:
 	@devtools/refresh-submodules.sh $(SUBMODULES)
@@ -57,6 +57,7 @@ nostril: $(HEADERS) $(OBJS) $(ARS)
 install: all
 	install -Dm644 doc/nostril.1 $(PREFIX)/share/man/man1/nostril.1
 	install -Dm755 nostril $(PREFIX)/bin/nostril
+	install -Dm755 nostril-query $(PREFIX)/bin/nostril-query
 
 config.h: configurator
 	./configurator > $@

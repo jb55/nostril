@@ -10,6 +10,7 @@ parser.add_argument('-p', '--mentions')
 parser.add_argument('-e', '--references')
 parser.add_argument('-t', '--hashtag')
 parser.add_argument('-i', '--ids')
+parser.add_argument('-k', '--kinds')
 parser.add_argument('-g', 
                     '--generic',
                     nargs=2,
@@ -47,6 +48,9 @@ if args.mentions:
 if args.references:
     filt["#e"] = args.references.split(",")
 
+if args.kinds:
+    kinds = args.kinds.split(",")
+    filt["kinds"] = [a for a in map(lambda s: int(s), kinds)]
 
 q = json.dumps(["REQ","nostril-query",filt])
 print(q)

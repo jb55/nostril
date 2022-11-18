@@ -126,7 +126,7 @@ fi
 evid=$(jq -r '
 def tag(name): .tags[] | select(.[0] == name) | .[1];
 
-. | [(.created_at | tostring), (.|tag("t")), (.|tag("author")), (.|tag("subject")), .pubkey[0:20], "id:\(.id)"] | @tsv' "$outname" |
+. | [(.created_at | tostring), (.|tag("t")), (.|tag("subject")), (.|tag("author")), .pubkey[0:20], "id:\(.id)"] | @tsv' "$outname" |
 sort -rn |
 $dateformatter |
 column -t -s $'\t' |
