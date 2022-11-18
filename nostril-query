@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+
+import sys
+import argparse
+import json
+
+parser = argparse.ArgumentParser(prog = 'nostril-query', description = 'Construct nostr queries')
+parser.add_argument('-a', '--authors')
+parser.add_argument('-p', '--mentions')
+parser.add_argument('-e', '--references')
+parser.add_argument('-t', '--hashtag')
+parser.add_argument('-i', '--ids')
+parser.add_argument('-g', 
+                    '--generic',
+                    nargs=2,
+                    metavar=('tag', 'value'),
+                    help="Generic tag query: `#<tag>: value`")
+parser.add_argument('-l', '--limit', type=int)
+
+def usage():
+    parser.print_help()
+    sys.exit(1)
+
+args = parser.parse_args()
+
+filt = {}
+
+if args.authors:
+    filt["authors"] = args.authors.split(",")
+
+if args.ids:
+    filt["ids"] = args.ids.split(",")
+
+if args.limit:
+    filt["limit"] = args.limit
+
+if args.generic:
+    (tag, val) = args.generic
+    filt["#" + tag] = val.split(",")
+
+if args.hashtag:
+    filt["#t"] = args.hashtag.split(",")
+
+if args.mentions:
+    filt["#p"] = args.mentions.split(",")
+
+if args.references:
+    filt["#e"] = args.references.split(",")
+
+
+q = json.dumps(["REQ","nostril-query",filt])
+print(q)
