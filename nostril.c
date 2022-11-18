@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <unistd.h>
 
 #include "secp256k1.h"
 #include "secp256k1_ecdh.h"
@@ -716,6 +717,17 @@ static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
 	return 1;
 }
 
+static void try_subcommand(int argc, const char *argv[])
+{
+	static char buf[128] = {0};
+	const char *sub = argv[1];
+	if (strlen(sub) >= 1 && sub[0] != '-') {
+		snprintf(buf, sizeof(buf)-1, "nostril-%s", sub);
+		execvp(buf, (char * const *)argv+1);
+	}
+}
+
+
 int main(int argc, const char *argv[])
 {
 	struct args args = {0};
@@ -728,6 +740,8 @@ int main(int argc, const char *argv[])
 
         if (!init_secp_context(&ctx))
 		return 2;
+
+	try_subcommand(argc, argv);
 
 	if (!parse_args(argc, argv, &args, &ev)) {
 		usage();
