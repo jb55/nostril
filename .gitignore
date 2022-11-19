@@ -14,7 +14,6 @@ libsecp256k1.a
 
 Cargo.lock
 Cargo.toml
-doc/nostril.1
 *.json
 scripts/jb55-post
 scripts/nostr-follows
