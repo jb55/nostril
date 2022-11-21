@@ -9,3 +9,14 @@ configurator
 .buildcmd
 config.h
 tags
+.DS_Store
+deps/.DS_Store
+libsecp256k1.a
+nostril.xcodeproj/project.xcworkspace/xcuserdata/
+build
+secp256k1.h
+secp256k1_ecdh.h
+secp256k1_extrakeys.h
+secp256k1_preallocated.h
+secp256k1_recovery.h
+secp256k1_schnorrsig.h

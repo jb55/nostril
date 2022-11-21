@@ -1,0 +1,471 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		4B073288292BE6CE00A9EF4B /* libsecp256k1 */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 4B073289292BE6CE00A9EF4B /* Build configuration list for PBXAggregateTarget "libsecp256k1" */;
+			buildPhases = (
+				4B073292292BE6F600A9EF4B /* make-libsecp256k1.a */,
+			);
+			dependencies = (
+			);
+			name = libsecp256k1;
+			productName = libsecp256k1;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		4B07327C292BE60300A9EF4B /* libsecp256k1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B07327B292BE60300A9EF4B /* libsecp256k1.a */; };
+		4B0732A1292BEB9D00A9EF4B /* secp256k1_recovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073247292BE27000A9EF4B /* secp256k1_recovery.h */; };
+		4B0732A2292BEB9E00A9EF4B /* secp256k1_schnorrsig.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073248292BE27000A9EF4B /* secp256k1_schnorrsig.h */; };
+		4B0732A3292BEB9E00A9EF4B /* secp256k1.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073253292BE27100A9EF4B /* secp256k1.h */; };
+		4B0732A4292BEB9E00A9EF4B /* secp256k1_extrakeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073245292BE27000A9EF4B /* secp256k1_extrakeys.h */; };
+		4B0732A5292BEB9E00A9EF4B /* secp256k1_ecdh.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B07324B292BE27000A9EF4B /* secp256k1_ecdh.h */; };
+		4B0732A6292BEB9E00A9EF4B /* secp256k1_preallocated.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073251292BE27100A9EF4B /* secp256k1_preallocated.h */; };
+		4B0732B7292BEC7000A9EF4B /* aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B073250292BE27100A9EF4B /* aes.c */; };
+		4B0732BA292BEC7600A9EF4B /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B073242292BE27000A9EF4B /* base64.c */; };
+		4B0732BD292BEC7C00A9EF4B /* nostril.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B073244292BE27000A9EF4B /* nostril.c */; };
+		4B0732C0292BEC7F00A9EF4B /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B07324D292BE27100A9EF4B /* sha256.c */; };
+		4B0732C3292BECB200A9EF4B /* aes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073243292BE27000A9EF4B /* aes.h */; };
+		4B0732D4292BEF7700A9EF4B /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B07324E292BE27100A9EF4B /* base64.h */; };
+		4B0732D7292BEF8800A9EF4B /* compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B07324A292BE27000A9EF4B /* compiler.h */; };
+		4B0732DA292BEF8F00A9EF4B /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073240292BE27000A9EF4B /* config.h */; };
+		4B0732DF292BEF9C00A9EF4B /* cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B07323F292BE27000A9EF4B /* cursor.h */; };
+		4B0732E2292BEFA400A9EF4B /* endian.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073249292BE27000A9EF4B /* endian.h */; };
+		4B0732E5292BEFAC00A9EF4B /* hex.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B07324F292BE27100A9EF4B /* hex.h */; };
+		4B0732E8292BEFB400A9EF4B /* proof.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073241292BE27000A9EF4B /* proof.h */; };
+		4B0732EF292BEFC900A9EF4B /* random.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073246292BE27000A9EF4B /* random.h */; };
+		4B0732F2292BEFD000A9EF4B /* sha256.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073252292BE27100A9EF4B /* sha256.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4B07328E292BE6E100A9EF4B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B072812292AEFB200A9EF4B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B073288292BE6CE00A9EF4B;
+			remoteInfo = libsecp256k1;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4B072818292AEFB200A9EF4B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4B07281A292AEFB200A9EF4B /* nostril */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nostril; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B07323F292BE27000A9EF4B /* cursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cursor.h; sourceTree = "<group>"; };
+		4B073240292BE27000A9EF4B /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		4B073241292BE27000A9EF4B /* proof.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = proof.h; sourceTree = "<group>"; };
+		4B073242292BE27000A9EF4B /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
+		4B073243292BE27000A9EF4B /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
+		4B073244292BE27000A9EF4B /* nostril.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nostril.c; sourceTree = "<group>"; };
+		4B073245292BE27000A9EF4B /* secp256k1_extrakeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1_extrakeys.h; sourceTree = "<group>"; };
+		4B073246292BE27000A9EF4B /* random.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = random.h; sourceTree = "<group>"; };
+		4B073247292BE27000A9EF4B /* secp256k1_recovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1_recovery.h; sourceTree = "<group>"; };
+		4B073248292BE27000A9EF4B /* secp256k1_schnorrsig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1_schnorrsig.h; sourceTree = "<group>"; };
+		4B073249292BE27000A9EF4B /* endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		4B07324A292BE27000A9EF4B /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
+		4B07324B292BE27000A9EF4B /* secp256k1_ecdh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1_ecdh.h; sourceTree = "<group>"; };
+		4B07324D292BE27100A9EF4B /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
+		4B07324E292BE27100A9EF4B /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		4B07324F292BE27100A9EF4B /* hex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hex.h; sourceTree = "<group>"; };
+		4B073250292BE27100A9EF4B /* aes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes.c; sourceTree = "<group>"; };
+		4B073251292BE27100A9EF4B /* secp256k1_preallocated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1_preallocated.h; sourceTree = "<group>"; };
+		4B073252292BE27100A9EF4B /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha256.h; sourceTree = "<group>"; };
+		4B073253292BE27100A9EF4B /* secp256k1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1.h; sourceTree = "<group>"; };
+		4B07327B292BE60300A9EF4B /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsecp256k1.a; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4B072817292AEFB200A9EF4B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B07327C292BE60300A9EF4B /* libsecp256k1.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4B072811292AEFB200A9EF4B = {
+			isa = PBXGroup;
+			children = (
+				4B073250292BE27100A9EF4B /* aes.c */,
+				4B073243292BE27000A9EF4B /* aes.h */,
+				4B073242292BE27000A9EF4B /* base64.c */,
+				4B07324E292BE27100A9EF4B /* base64.h */,
+				4B07324A292BE27000A9EF4B /* compiler.h */,
+				4B073240292BE27000A9EF4B /* config.h */,
+				4B07323F292BE27000A9EF4B /* cursor.h */,
+				4B073249292BE27000A9EF4B /* endian.h */,
+				4B07324F292BE27100A9EF4B /* hex.h */,
+				4B073244292BE27000A9EF4B /* nostril.c */,
+				4B073241292BE27000A9EF4B /* proof.h */,
+				4B073246292BE27000A9EF4B /* random.h */,
+				4B07324D292BE27100A9EF4B /* sha256.c */,
+				4B073252292BE27100A9EF4B /* sha256.h */,
+				4B07281B292AEFB200A9EF4B /* Products */,
+				4B072A04292AF2CA00A9EF4B /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		4B07281B292AEFB200A9EF4B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4B07281A292AEFB200A9EF4B /* nostril */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4B072A04292AF2CA00A9EF4B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4B07327B292BE60300A9EF4B /* libsecp256k1.a */,
+				4B07324B292BE27000A9EF4B /* secp256k1_ecdh.h */,
+				4B073245292BE27000A9EF4B /* secp256k1_extrakeys.h */,
+				4B073251292BE27100A9EF4B /* secp256k1_preallocated.h */,
+				4B073247292BE27000A9EF4B /* secp256k1_recovery.h */,
+				4B073248292BE27000A9EF4B /* secp256k1_schnorrsig.h */,
+				4B073253292BE27100A9EF4B /* secp256k1.h */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		4B07326B292BE54F00A9EF4B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B0732A1292BEB9D00A9EF4B /* secp256k1_recovery.h in Headers */,
+				4B0732A6292BEB9E00A9EF4B /* secp256k1_preallocated.h in Headers */,
+				4B0732A2292BEB9E00A9EF4B /* secp256k1_schnorrsig.h in Headers */,
+				4B0732A4292BEB9E00A9EF4B /* secp256k1_extrakeys.h in Headers */,
+				4B0732A3292BEB9E00A9EF4B /* secp256k1.h in Headers */,
+				4B0732A5292BEB9E00A9EF4B /* secp256k1_ecdh.h in Headers */,
+				4B0732C3292BECB200A9EF4B /* aes.h in Headers */,
+				4B0732D4292BEF7700A9EF4B /* base64.h in Headers */,
+				4B0732DA292BEF8F00A9EF4B /* config.h in Headers */,
+				4B0732D7292BEF8800A9EF4B /* compiler.h in Headers */,
+				4B0732DF292BEF9C00A9EF4B /* cursor.h in Headers */,
+				4B0732E2292BEFA400A9EF4B /* endian.h in Headers */,
+				4B0732E5292BEFAC00A9EF4B /* hex.h in Headers */,
+				4B0732E8292BEFB400A9EF4B /* proof.h in Headers */,
+				4B0732EF292BEFC900A9EF4B /* random.h in Headers */,
+				4B0732F2292BEFD000A9EF4B /* sha256.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		4B072819292AEFB200A9EF4B /* nostril */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B072821292AEFB200A9EF4B /* Build configuration list for PBXNativeTarget "nostril" */;
+			buildPhases = (
+				4B07326B292BE54F00A9EF4B /* Headers */,
+				4B072816292AEFB200A9EF4B /* Sources */,
+				4B072817292AEFB200A9EF4B /* Frameworks */,
+				4B072818292AEFB200A9EF4B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4B07328F292BE6E100A9EF4B /* PBXTargetDependency */,
+			);
+			name = nostril;
+			productName = xcode;
+			productReference = 4B07281A292AEFB200A9EF4B /* nostril */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4B072812292AEFB200A9EF4B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1230;
+				TargetAttributes = {
+					4B072819292AEFB200A9EF4B = {
+						CreatedOnToolsVersion = 12.3;
+					};
+					4B073288292BE6CE00A9EF4B = {
+						CreatedOnToolsVersion = 12.3;
+					};
+				};
+			};
+			buildConfigurationList = 4B072815292AEFB200A9EF4B /* Build configuration list for PBXProject "nostril" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4B072811292AEFB200A9EF4B;
+			productRefGroup = 4B07281B292AEFB200A9EF4B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4B072819292AEFB200A9EF4B /* nostril */,
+				4B073288292BE6CE00A9EF4B /* libsecp256k1 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4B073292292BE6F600A9EF4B /* make-libsecp256k1.a */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "make-libsecp256k1.a";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "make libsecp256k1.a\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4B072816292AEFB200A9EF4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B0732B7292BEC7000A9EF4B /* aes.c in Sources */,
+				4B0732BA292BEC7600A9EF4B /* base64.c in Sources */,
+				4B0732BD292BEC7C00A9EF4B /* nostril.c in Sources */,
+				4B0732C0292BEC7F00A9EF4B /* sha256.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4B07328F292BE6E100A9EF4B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B073288292BE6CE00A9EF4B /* libsecp256k1 */;
+			targetProxy = 4B07328E292BE6E100A9EF4B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4B07281F292AEFB200A9EF4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4B072820292AEFB200A9EF4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4B072822292AEFB200A9EF4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = M684FYCYG6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.bitcoincore.nostril;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4B072823292AEFB200A9EF4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = M684FYCYG6;
+				ENABLE_HARDENED_RUNTIME = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.bitcoincore.nostril;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4B07328A292BE6CE00A9EF4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = M684FYCYG6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4B07328B292BE6CE00A9EF4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = M684FYCYG6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4B072815292AEFB200A9EF4B /* Build configuration list for PBXProject "nostril" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B07281F292AEFB200A9EF4B /* Debug */,
+				4B072820292AEFB200A9EF4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B072821292AEFB200A9EF4B /* Build configuration list for PBXNativeTarget "nostril" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B072822292AEFB200A9EF4B /* Debug */,
+				4B072823292AEFB200A9EF4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4B073289292BE6CE00A9EF4B /* Build configuration list for PBXAggregateTarget "libsecp256k1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4B07328A292BE6CE00A9EF4B /* Debug */,
+				4B07328B292BE6CE00A9EF4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4B072812292AEFB200A9EF4B /* Project object */;
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:../../aes.c">
+   </FileRef>
+   <FileRef
+      location = "group:../../aes.h">
+   </FileRef>
+   <FileRef
+      location = "self:/Users/git/nostril/xcode/nostril.xcodeproj">
+   </FileRef>
+</Workspace>
