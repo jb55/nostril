@@ -42,6 +42,11 @@
 		4B0732E8292BEFB400A9EF4B /* proof.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073241292BE27000A9EF4B /* proof.h */; };
 		4B0732EF292BEFC900A9EF4B /* random.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073246292BE27000A9EF4B /* random.h */; };
 		4B0732F2292BEFD000A9EF4B /* sha256.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B073252292BE27100A9EF4B /* sha256.h */; };
+		4B073308292BF0BD00A9EF4B /* nostr-post in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4B0732FE292BF09200A9EF4B /* nostr-post */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4B073309292BF0BD00A9EF4B /* nostr-relay-note in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4B0732FF292BF09200A9EF4B /* nostr-relay-note */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4B07330A292BF0BE00A9EF4B /* nostr-contact in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4B073300292BF09200A9EF4B /* nostr-contact */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4B07330B292BF0BE00A9EF4B /* nostr-query in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4B073301292BF09200A9EF4B /* nostr-query */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4B073322292BF13A00A9EF4B /* nostril in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4B07281A292AEFB200A9EF4B /* nostril */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,12 +62,17 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		4B072818292AEFB200A9EF4B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = /usr/local/bin;
 			dstSubfolderSpec = 0;
 			files = (
+				4B073322292BF13A00A9EF4B /* nostril in CopyFiles */,
+				4B073308292BF0BD00A9EF4B /* nostr-post in CopyFiles */,
+				4B073309292BF0BD00A9EF4B /* nostr-relay-note in CopyFiles */,
+				4B07330A292BF0BE00A9EF4B /* nostr-contact in CopyFiles */,
+				4B07330B292BF0BE00A9EF4B /* nostr-query in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -89,6 +99,10 @@
 		4B073252292BE27100A9EF4B /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha256.h; sourceTree = "<group>"; };
 		4B073253292BE27100A9EF4B /* secp256k1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1.h; sourceTree = "<group>"; };
 		4B07327B292BE60300A9EF4B /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsecp256k1.a; sourceTree = "<group>"; };
+		4B0732FE292BF09200A9EF4B /* nostr-post */ = {isa = PBXFileReference; lastKnownFileType = text; path = "nostr-post"; sourceTree = "<group>"; };
+		4B0732FF292BF09200A9EF4B /* nostr-relay-note */ = {isa = PBXFileReference; lastKnownFileType = text; path = "nostr-relay-note"; sourceTree = "<group>"; };
+		4B073300292BF09200A9EF4B /* nostr-contact */ = {isa = PBXFileReference; lastKnownFileType = text; path = "nostr-contact"; sourceTree = "<group>"; };
+		4B073301292BF09200A9EF4B /* nostr-query */ = {isa = PBXFileReference; lastKnownFileType = text; path = "nostr-query"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +134,7 @@
 				4B073246292BE27000A9EF4B /* random.h */,
 				4B07324D292BE27100A9EF4B /* sha256.c */,
 				4B073252292BE27100A9EF4B /* sha256.h */,
+				4B0732FD292BF09200A9EF4B /* scripts */,
 				4B07281B292AEFB200A9EF4B /* Products */,
 				4B072A04292AF2CA00A9EF4B /* Frameworks */,
 			);
@@ -145,6 +160,17 @@
 				4B073253292BE27100A9EF4B /* secp256k1.h */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4B0732FD292BF09200A9EF4B /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				4B0732FE292BF09200A9EF4B /* nostr-post */,
+				4B0732FF292BF09200A9EF4B /* nostr-relay-note */,
+				4B073300292BF09200A9EF4B /* nostr-contact */,
+				4B073301292BF09200A9EF4B /* nostr-query */,
+			);
+			path = scripts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -396,6 +422,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bitcoincore.nostril;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -412,6 +439,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.bitcoincore.nostril;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
