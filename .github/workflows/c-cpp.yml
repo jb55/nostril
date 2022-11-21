@@ -1,17 +1,93 @@
-name: C/C++ CI
+name: nostril
 
+# Controls when the action will run.
 on:
-  push:
-    branches: [ "master", "**" ]
   pull_request:
-    branches: [ "master" ]
+    branches:       #[ master ]
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - 'master'    # includes master
+      - 'main'      # includes main
+  push:
+    paths:
+      - '.github/workflows/c-cpp.yml'
+    schedule:
+      - cron: "1 * * * *"
+    branches:       #[ master ]
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - 'master'    # includes master
+      - 'main'      # includes main
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  github-workspace:
+    name: github-workspace
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
-    - name: make 
-      run: make 
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Print github workspace
+        run: |
+          printenv
+
+  ubuntu-build_and_test:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+        #python venv stub for other scripting/tests
+      - uses: actions/setup-python@v2
+      - uses: syphar/restore-virtualenv@v1
+        id: cache-virtualenv
+      - uses: syphar/restore-pip-download-cache@v1
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+      - run: touch ./scripts/requirements.txt && pip install -r ./scripts/requirements.txt
+        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+
+      - name: make libsec256k1.a
+        run: |
+          make libsecp256k1.a
+          SECP256K1_COMMIT=$(git -C deps/secp256k1 rev-parse --short HEAD)
+          echo 'SECP256K1_COMMIT='$SECP256K1_COMMIT
+      - name: SESSION_PRIVKEY
+        run: |
+          echo 'GITHUB_REF_NAME='$GITHUB_REF_NAME
+          SESSION_PRIVKEY=$(echo $GITHUB_REF_NAME | shasum -a 256 | tr -d '-')
+          echo -e 'SESSION_PRIVKEY=\n'$SESSION_PRIVKEY
+      - name: make sequence
+        run: |
+          make
+          sudo -s make install
+      - name: nostril
+        run: |
+          #handle non-zero returns
+          sudo -su runner nostril        | echo "${PIPESTATUS[0]} ${PIPESTATUS[1]}"
+      - name: nostril --help
+        run: |
+          #handle non-zero returns
+          sudo -su runner nostril --help | echo "${PIPESTATUS[0]} ${PIPESTATUS[1]}"
+      - name: nostril --sec
+        run: |
+          export SESSION_PRIVKEY=$(echo $GITHUB_REF_NAME | shasum -a 256 | tr -d '-')
+          export SECP256K1_COMMIT=$(git -C deps/secp256k1 rev-parse --short HEAD)
+          sudo -su runner nostril --sec $(echo $SESSION_PRIVKEY)
+          sudo -su runner nostril --sec $(echo $SESSION_PRIVKEY) --created-at 0
+          sudo -su runner nostril --sec $(echo $SESSION_PRIVKEY) --created-at 1 \
+          --envelope --content "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tree/$GITHUB_REF_NAME" --kind 1 --tag secp256k1 $SECP256K1_COMMIT
+          #TODO: more tests...
+
