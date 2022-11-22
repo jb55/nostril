@@ -32,23 +32,23 @@ if args.authors:
 if args.ids:
     filt["ids"] = args.ids.split(",")
 
-if args.limit:
+if args.limit is not None:
     filt["limit"] = args.limit
 
 if args.generic:
     (tag, val) = args.generic
     filt["#" + tag] = val.split(",")
 
-if args.hashtag:
+if args.hashtag is not None:
     filt["#t"] = args.hashtag.split(",")
 
-if args.mentions:
+if args.mentions is not None:
     filt["#p"] = args.mentions.split(",")
 
-if args.references:
+if args.references is not None:
     filt["#e"] = args.references.split(",")
 
-if args.kinds:
+if args.kinds is not None:
     kinds = args.kinds.split(",")
     filt["kinds"] = [a for a in map(lambda s: int(s), kinds)]
 
