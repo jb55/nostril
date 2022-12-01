@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-websocat "$@" wss://relay.damus.io

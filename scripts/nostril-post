@@ -19,11 +19,19 @@ if [[ "$content" =~ $re ]]; then
 	exit 2
 fi
 
-note=$(nostril "$@" --content "$content")
+sec=""
+if command -v git; then
+	key=$(git config nostr.secretkey)
+	if [ $key != "" ]; then
+		sec="--sec $key"
+	fi
+fi
+
+note=$(nostril --envelope $sec "$@" --content "$content")
 
 printf "relaying:\n" >&2
 printf "$note\n"
-<<<"$note" nostr-relay-note
+<<<"$note" nostril relay
 printf "done.\n" >&2
 
 rm -f "$TMP"

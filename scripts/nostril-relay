@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+relays=${NOSTR_RELAYS:-$(git config nostr.relays)}
+relayer=${NOSTR_RELAYER:-nostcat}
+to_stdout=0
+
+if ! command -v $relayer; then
+	printf "nostr relayer '%s' not found. Please install or set NOSTR_RELAYER to your preferred relayer.\n" "$relayer"
+	exit 1
+fi
+
+if [ "$relays" == "" ]; then
+	printf 'no relays set. set\n\n    export NOSTR_RELAYS="wss://relay1.com wss://relay2.com ..." or\n\n    git config --global --add nostr.relays "wss://relay1.com wss://relay2.com"\n' >&2
+	exit 1
+fi
+
+$relayer $relays

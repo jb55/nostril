@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-jq -c '["EVENT",.]' | websocat wss://relay.damus.io
