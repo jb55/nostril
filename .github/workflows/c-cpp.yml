@@ -1,17 +1,49 @@
-name: C/C++ CI
+name: nostril-ubuntu-matrix
 
+# Controls when the action will run.
 on:
-  push:
-    branches: [ "master", "**" ]
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - '*'
+      - '*/*'
+      - '**'
+      - 'master'
+      - 'main'
+  push:
+    branches:
+      - '*'
+      - '*/*'
+      - '**'
+      - 'master'
+      - 'main'
 
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  ubuntu-build_and_test:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
-    - name: make 
-      run: make 
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - name: printenv
+        run: |
+          printenv
+      - name: make
+        run: |
+          make
+      - name: sudo make install
+        run: |
+          sudo make install
+      - name: man nostril
+        run: |
+          man nostril
+      - name: sudo -su runner nostril
+        run: |
+          #pipe handles non-zero return from nostril default help
+          sudo -su runner nostril        | echo "${PIPESTATUS[0]}"
