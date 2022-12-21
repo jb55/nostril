@@ -1,4 +1,4 @@
-name: nostril-ubuntu-matrix
+name: ubuntu-matrix
 
 # Controls when the action will run.
 on:
