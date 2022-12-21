@@ -1,0 +1,40 @@
+name: ubuntu-pre-release
+
+# Controls when the action will run.
+on:
+  push:
+    branches:
+      - 'master'
+      - '**-pre-release'
+
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  pre-release:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - name: "build pre-release"
+        run: |
+          make
+          shasum -a 256 nostril > nostril.sha256.txt
+      - name: Save state
+        run: echo "{name}={value}" >> $GITHUB_STATE
+      - name: Set output
+        run: echo "{name}={value}" >> $GITHUB_OUTPUT
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ matrix.os }}
+          prerelease: true
+          title: "Development Build"
+          files: |
+            nostril
+            nostril.sha256.txt
