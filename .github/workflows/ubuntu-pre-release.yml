@@ -21,10 +21,17 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v2
-      - name: "build pre-release"
+      - name: "printenv"
+        run: |
+          printenv
+      - name: "Build pre-release"
         run: |
           make
-          shasum -a 256 nostril > nostril.sha256.txt
+          mv nostril nostril-$RUNNER_OS-$RUNNER_ARCH
+          shasum -a 256 nostril-$RUNNER_OS-$RUNNER_ARCH > nostril-$RUNNER_OS-$RUNNER_ARCH.sha256.txt
+          mv nostril-query nostril-query-$RUNNER_OS-$RUNNER_ARCH
+          shasum -a 256 nostril-query-$RUNNER_OS-$RUNNER_ARCH > nostril-query-$RUNNER_OS-$RUNNER_ARCH.sha256.txt
+          ls -a
       - name: Save state
         run: echo "{name}={value}" >> $GITHUB_STATE
       - name: Set output
@@ -36,5 +43,4 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            nostril
-            nostril.sha256.txt
+            nostril-*
