@@ -11,7 +11,7 @@ all: nostril docs
 
 docs: doc/nostril.1
 
-doc/nostril.1: README.txt
+doc/nostril.1: README.md
 	scdoc < $^ > $@
 
 version: nostril.c
