@@ -7,7 +7,19 @@ ARS = libsecp256k1.a
 
 SUBMODULES = deps/secp256k1
 
-all: nostril docs
+default:
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+help:## 	print verbose help
+	@echo ''
+	@echo 'Usage: make [TARGET] [EXTRA_ARGUMENTS]'
+	@echo ''
+	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':   ' |  sed -e 's/^/ /' ## verbose help ideas
+	@sed -n 's/^##  //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
+	@echo ""
+	@echo "Useful Commands:"
+	@echo ""
+
+all: nostril docs## 	nostril docs
 
 docs: doc/nostril.1
 
@@ -73,4 +85,4 @@ clean:
 tags: fake
 	ctags *.c *.h
 
-.PHONY: fake
+.PHONY: fake nostril
