@@ -143,7 +143,7 @@ ssize_t base64_decode_quartet_using_maps(const base64_maps_t *maps, char dest[3]
 }
 
 
-ssize_t base64_decode_tail_using_maps(const base64_maps_t *maps, char dest[3],
+ssize_t base64_decode_tail_using_maps(const base64_maps_t *maps, char *dest,
 				  const char * src, const size_t srclen)
 {
 	char longsrc[4];
