@@ -17,6 +17,7 @@ parser.add_argument('-g',
                     metavar=('tag', 'value'),
                     help="Generic tag query: `#<tag>: value`")
 parser.add_argument('-l', '--limit', type=int)
+parser.add_argument('-s', '--since', type=int)
 
 def usage():
     parser.print_help()
@@ -51,6 +52,9 @@ if args.references is not None:
 if args.kinds is not None:
     kinds = args.kinds.split(",")
     filt["kinds"] = [a for a in map(lambda s: int(s), kinds)]
+
+if args.since is not None:
+    filt["since"] = args.since
 
 q = json.dumps(["REQ","nostril-query",filt])
 print(q)
