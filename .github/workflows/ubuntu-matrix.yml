@@ -28,14 +28,23 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: styfle/cancel-workflow-action@0.11.0
+        if: ${{ !env.ACT }}
         with:
           access_token: ${{ github.token }}
-      - uses: actions/checkout@v2
-      - name: printenv
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          submodules: 'recursive'
+          set-safe-directory: 'true'
+      - name: printenv && sudo apt update && sudo apt install scdoc -y
         run: |
-          printenv
+          printenv && sudo apt update && sudo apt install scdoc -y
+      - name: rm -rf deps
+        run: |
+          rm -rf deps
       - name: make
         run: |
+          mkdir -p /usr/local/share/man/man1/nostril.1
           make
       - name: sudo make install
         run: |
@@ -43,7 +52,8 @@ jobs:
       - name: man nostril
         run: |
           man nostril
-      - name: sudo -su runner nostril
+      - name: sudo ./nostril
         run: |
           #pipe handles non-zero return from nostril default help
-          sudo -su runner nostril        | echo "${PIPESTATUS[0]}"
+          file nostril
+          sudo ./nostril >/dev/null | echo "${PIPESTATUS[0]}"

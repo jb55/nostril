@@ -46,6 +46,8 @@ deps/secp256k1/include/secp256k1.h: deps/secp256k1/.git
 
 deps/secp256k1/configure: deps/secp256k1/.git
 	cd deps/secp256k1; \
+	automake --add-missing; \
+	autoreconf; \
 	./autogen.sh
 
 deps/secp256k1/config.log: deps/secp256k1/configure
