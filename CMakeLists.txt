@@ -4,6 +4,11 @@ else()
  cmake_minimum_required(VERSION 3.15)
 endif() 
 set(CMAKE_BUILD_TYPE Debug)
+option(BUILD_RELEASE "BUILD_RELEASE" ON)
+if(BUILD_RELEASE)
+ set(CMAKE_BUILD_TYPE Release)
+endif()
+
 project (nostril C)
 
 include_directories(${CMAKE_SOURCE_DIR}/ext/secp256k1/include)
