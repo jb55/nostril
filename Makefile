@@ -7,7 +7,19 @@ ARS = libsecp256k1.a
 
 SUBMODULES = deps/secp256k1
 
-all: nostril docs
+default:
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+help:## 	print verbose help
+	@echo ''
+	@echo 'Usage: make [TARGET] [EXTRA_ARGUMENTS]'
+	@echo ''
+	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':   ' |  sed -e 's/^/ /' ## verbose help ideas
+	@sed -n 's/^##  //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
+	@echo ""
+	@echo "Useful Commands:"
+	@echo ""
+
+all: nostril docs## 	nostril docs
 
 docs: doc/nostril.1
 
@@ -34,6 +46,8 @@ deps/secp256k1/include/secp256k1.h: deps/secp256k1/.git
 
 deps/secp256k1/configure: deps/secp256k1/.git
 	cd deps/secp256k1; \
+	automake --add-missing; \
+	autoreconf; \
 	./autogen.sh
 
 deps/secp256k1/config.log: deps/secp256k1/configure
@@ -55,9 +69,10 @@ nostril: $(HEADERS) $(OBJS) $(ARS)
 	$(CC) $(CFLAGS) $(OBJS) $(ARS) -o $@
 
 install: all
-	install -Dm644 doc/nostril.1 $(PREFIX)/share/man/man1/nostril.1
-	install -Dm755 nostril $(PREFIX)/bin/nostril
-	install -Dm755 nostril-query $(PREFIX)/bin/nostril-query
+	mkdir -p $(PREFIX)/bin
+	install -m644 doc/nostril.1 $(PREFIX)/share/man/man1/nostril.1
+	install -m755 nostril $(PREFIX)/bin/nostril
+	install -m755 nostril-query $(PREFIX)/bin/nostril-query
 
 config.h: configurator
 	./configurator > $@
@@ -72,4 +87,4 @@ clean:
 tags: fake
 	ctags *.c *.h
 
-.PHONY: fake
+.PHONY: fake nostril
