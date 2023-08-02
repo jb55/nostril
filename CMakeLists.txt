@@ -71,8 +71,18 @@ target_link_libraries (nostril ${lib_dep})
 add_custom_command(
     TARGET configurator
     POST_BUILD
-    COMMAND configurator > config.h 
+    COMMAND configurator > config.h
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/config.h" ${CMAKE_SOURCE_DIR}
     COMMENT "generating config.h"
 )
 
+#//////////////////////////
+# Install
+#//////////////////////////
+
+install(TARGETS nostril
+        CONFIGURATIONS Debug
+        RUNTIME DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+install(TARGETS nostril
+        CONFIGURATIONS Release
+        RUNTIME DESTINATION /usr/local/bin)
