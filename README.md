@@ -30,6 +30,9 @@ nostril - generate nostr events
 *--created-at* <unix timestamp>
 	Set the created at. Optional, this is set automatically.
 
+*--sec* <hex seckey>
+	Set the secret key for signing, otherwise one will be randomly generated.
+
 *--mine-pubkey*
 	Mine a pubkey. This may or may not be cryptographically dubious.
 
