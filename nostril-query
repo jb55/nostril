@@ -12,6 +12,7 @@ parser.add_argument('-d', '--parameter')
 parser.add_argument('-t', '--hashtag')
 parser.add_argument('-i', '--ids')
 parser.add_argument('-k', '--kinds')
+parser.add_argument('-s', '--search')
 parser.add_argument('-g', 
                     '--generic',
                     nargs=2,
@@ -39,6 +40,9 @@ if args.limit is not None:
 if args.generic:
     (tag, val) = args.generic
     filt["#" + tag] = val.split(",")
+
+if args.search:
+    filt["search"] = args.search
 
 if args.hashtag is not None:
     filt["#t"] = args.hashtag.split(",")
