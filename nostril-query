@@ -5,6 +5,7 @@ import argparse
 import json
 
 parser = argparse.ArgumentParser(prog = 'nostril-query', description = 'Construct nostr queries')
+parser.add_argument('-r', '--raw', action=argparse.BooleanOptionalAction)
 parser.add_argument('-a', '--authors')
 parser.add_argument('-p', '--mentions')
 parser.add_argument('-e', '--references')
@@ -60,5 +61,10 @@ if args.kinds is not None:
     kinds = args.kinds.split(",")
     filt["kinds"] = [a for a in map(lambda s: int(s), kinds)]
 
-q = json.dumps(["REQ","nostril-query",filt])
+q = ""
+if args.raw is not None:
+    q = json.dumps(filt)
+else:
+    q = json.dumps(["REQ","nostril-query",filt])
+
 print(q)
