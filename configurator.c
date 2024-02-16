@@ -37,7 +37,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _MSC_VER
+#define sleep Sleep
+#else
 #include <unistd.h>
+#endif
 
 #ifdef _MSC_VER
 #define popen _popen

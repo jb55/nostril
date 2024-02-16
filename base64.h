@@ -6,6 +6,18 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
+#if defined(_MSC_VER)
+#ifndef _SSIZE_T_DEFINED
+#ifdef  _WIN64
+typedef unsigned __int64    ssize_t;
+#else
+typedef _W64 unsigned int   ssize_t;
+#endif
+#define _SSIZE_T_DEFINED
+#endif
+#endif
+
+
 /**
  * base64_maps_t - structure to hold maps for encode/decode
  */

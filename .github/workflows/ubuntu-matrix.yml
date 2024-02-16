@@ -1,0 +1,59 @@
+name: ubuntu-matrix
+
+# Controls when the action will run.
+on:
+  pull_request:
+    branches:
+      - '*'
+      - '*/*'
+      - '**'
+      - 'master'
+      - 'main'
+  push:
+    branches:
+      - '*'
+      - '*/*'
+      - '**'
+      - 'master'
+      - 'main'
+
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  ubuntu-build_and_test:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: styfle/cancel-workflow-action@0.11.0
+        if: ${{ !env.ACT }}
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          submodules: 'recursive'
+          set-safe-directory: 'true'
+      - name: printenv && sudo apt update && sudo apt install scdoc -y
+        run: |
+          printenv && sudo apt update && sudo apt install scdoc -y
+      - name: rm -rf deps
+        run: |
+          rm -rf deps
+      - name: make
+        run: |
+          mkdir -p /usr/local/share/man/man1/nostril.1
+          make
+      - name: sudo make install
+        run: |
+          sudo make install
+      - name: man nostril
+        run: |
+          man nostril
+      - name: sudo ./nostril
+        run: |
+          #pipe handles non-zero return from nostril default help
+          file nostril
+          sudo ./nostril >/dev/null | echo "${PIPESTATUS[0]}"

@@ -6,8 +6,19 @@
 #include <assert.h>
 #include <string.h>
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable: 4005) 
+# pragma warning(disable: 4477) 
+#endif
+
+#ifdef _MSC_VER
+#define unlikely
+#define likely
+#else
 #define unlikely(x) __builtin_expect((x),0)
 #define likely(x)   __builtin_expect((x),1)
+#endif 
 
 struct cursor {
 	unsigned char *start;

@@ -1,0 +1,53 @@
+name: ubuntu-pre-release
+
+# Controls when the action will run.
+on:
+  push:
+    branches:
+      - 'master'
+      - '**pre-release**'
+
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  pre-release:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: styfle/cancel-workflow-action@0.11.0
+        if: ${{ !env.ACT }}
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          submodules: 'recursive'
+          set-safe-directory: 'true'
+      - name: printenv && sudo apt update && sudo apt install scdoc -y
+        run: |
+          printenv && sudo apt update && sudo apt install scdoc -y
+      - name: "Build pre-release"
+        run: |
+          mkdir -p /usr/local/share/man/man1/nostril.1
+          make nostril
+          mv nostril nostril-$RUNNER_OS-$RUNNER_ARCH
+          shasum -a 256 nostril-$RUNNER_OS-$RUNNER_ARCH > nostril-$RUNNER_OS-$RUNNER_ARCH.sha256.txt
+          mv nostril-query nostril-query-$RUNNER_OS-$RUNNER_ARCH
+          shasum -a 256 nostril-query-$RUNNER_OS-$RUNNER_ARCH > nostril-query-$RUNNER_OS-$RUNNER_ARCH.sha256.txt
+          ls -a
+      - name: Save state
+        run: echo "{name}={value}" >> $GITHUB_STATE
+      - name: Set output
+        run: echo "{name}={value}" >> $GITHUB_OUTPUT
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        if: ${{ !env.ACT }}
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ matrix.os }}
+          prerelease: true
+          title: "Development Build"
+          files: |
+            nostril-*
