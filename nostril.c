@@ -21,8 +21,8 @@
 
 #define VERSION "0.1.3"
 
-#define MAX_TAGS 32
-#define MAX_TAG_ELEMS 16
+#define MAX_TAGS 1024
+#define MAX_TAG_ELEMS 64
 
 #define HAS_CREATED_AT (1<<1)
 #define HAS_KIND (1<<2)
