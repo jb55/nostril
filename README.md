@@ -42,6 +42,9 @@ nostril - generate nostr events
 *--tag* <key> <value>
 	Add a tag with a single value
 
+*--tagn* <N> <value \* N ...>
+	Add a tag with 0 or more elements
+
 *-t*
 	Shorthand for --tag t <hashtag>
 
