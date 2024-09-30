@@ -13,7 +13,7 @@ parser.add_argument('-d', '--parameter')
 parser.add_argument('-t', '--hashtag')
 parser.add_argument('-i', '--ids')
 parser.add_argument('-k', '--kinds')
-parser.add_argument('-s', '--search')
+parser.add_argument('-S', '--search')
 parser.add_argument('-g', 
                     '--generic',
                     nargs=2,
