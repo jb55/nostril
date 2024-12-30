@@ -6,6 +6,7 @@ import json
 
 parser = argparse.ArgumentParser(prog = 'nostril-query', description = 'Construct nostr queries')
 parser.add_argument('-r', '--raw', action=argparse.BooleanOptionalAction)
+parser.add_argument('-R', '--raw-envelope', action=argparse.BooleanOptionalAction)
 parser.add_argument('-a', '--authors')
 parser.add_argument('-p', '--mentions')
 parser.add_argument('-e', '--references')
@@ -21,6 +22,7 @@ parser.add_argument('-g',
                     help="Generic tag query: `#<tag>: value`")
 parser.add_argument('-l', '--limit', type=int)
 parser.add_argument('-s', '--since', type=int)
+parser.add_argument('-u', '--until', type=int)
 
 def usage():
     parser.print_help()
@@ -46,6 +48,12 @@ if args.generic:
 if args.search:
     filt["search"] = args.search
 
+if args.since:
+    filt["since"] = args.since
+
+if args.until:
+    filt["until"] = args.until
+
 if args.hashtag is not None:
     filt["#t"] = args.hashtag.split(",")
 
@@ -68,6 +76,8 @@ if args.since is not None:
 q = ""
 if args.raw is not None:
     q = json.dumps(filt)
+elif args.raw_envelope is not None:
+    q = json.dumps([filt])
 else:
     q = json.dumps(["REQ","nostril-query",filt])
 
