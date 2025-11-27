@@ -3,6 +3,7 @@
 .privenv
 nostril
 /result
+build.log
 configurator.out*
 configurator
 .build-result

@@ -1,11 +1,13 @@
 
-CFLAGS = -Wall -O2 -Ideps/secp256k1/include
-OBJS = sha256.o nostril.o aes.o base64.o
-HEADERS = hex.h random.h config.h sha256.h deps/secp256k1/include/secp256k1.h
+CFLAGS = -Wall -O2 -Ideps/secp256k1/include -Ideps/libsodium/src/libsodium/include/
+LDFLAGS = -lm
+OBJS = sha256.o nostril.o aes.o base64.o nip44.o hmac_sha256.o hkdf_sha256.o
+HEADERS = hex.h nip44.h cursor.h random.h config.h sha256.h deps/secp256k1/include/secp256k1.h
 PREFIX ?= /usr/local
-ARS = libsecp256k1.a
+LIBSODIUM_AR=deps/libsodium/src/libsodium/.libs/libsodium.a
+ARS = libsecp256k1.a $(LIBSODIUM_AR)
 
-SUBMODULES = deps/secp256k1
+SUBMODULES = deps/secp256k1 deps/libsodium
 
 all: nostril docs
 
@@ -26,6 +28,14 @@ dist: docs version
 	gpg -u 0x8A478B64FFE30F1095A8736BF5F27EFD1B38DABB --sign --armor --detach-sig --output SHA256SUMS.txt.asc SHA256SUMS.txt
 	cp CHANGELOG dist/CHANGELOG.txt
 	rsync -avzP dist/ charon:/www/cdn.jb55.com/tarballs/nostril/
+
+$(LIBSODIUM_AR): deps/libsodium/config.log
+	cd deps/libsodium/src/libsodium; \
+	make -j libsodium.la
+
+deps/libsodium/config.log: deps/libsodium/configure
+	cd deps/libsodium; \
+	./configure --disable-shared --enable-minimal
 
 deps/secp256k1/.git:
 	@devtools/refresh-submodules.sh $(SUBMODULES)
@@ -52,7 +62,7 @@ libsecp256k1.a: deps/secp256k1/.libs/libsecp256k1.a
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 nostril: $(HEADERS) $(OBJS) $(ARS)
-	$(CC) $(CFLAGS) $(OBJS) $(ARS) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(ARS) -o $@
 
 install: all
 	mkdir -p $(PREFIX)/share/man/man1

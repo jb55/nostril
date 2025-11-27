@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include "hex.h"
 
 #define unlikely(x) __builtin_expect((x),0)
 #define likely(x)   __builtin_expect((x),1)
@@ -254,9 +255,40 @@ static inline int cursor_pull_int(struct cursor *cursor, int *i)
 	return cursor_pull(cursor, (unsigned char*)i, sizeof(*i));
 }
 
+static inline int cursor_pull_u16(struct cursor *cursor, uint16_t *i)
+{
+	return cursor_pull(cursor, (unsigned char*)i, sizeof(*i));
+}
+
+#define BSWAP_16(val)				\
+	((((uint16_t)(val) & 0x00ff) << 8)	\
+	 | (((uint16_t)(val) & 0xff00) >> 8))
+
+static inline uint16_t bswap_16(uint16_t val)
+{
+	return BSWAP_16(val);
+}
+
 static inline int cursor_push_u16(struct cursor *cursor, unsigned short i)
 {
 	return cursor_push(cursor, (unsigned char*)&i, sizeof(i));
+}
+
+static int cursor_pull_b16(struct cursor *c, uint16_t *s)
+{
+	if (!cursor_pull_u16(c, s))
+		return 0;
+
+	// we assume little endian
+	*s = bswap_16(*s);
+	return 1;
+}
+
+static int cursor_push_b16(struct cursor *c, uint16_t s)
+{
+	if (!cursor_push_u16(c, bswap_16(s)))
+		return 0;
+	return 1;
 }
 
 static inline void *index_cursor(struct cursor *cursor, unsigned int index, int elem_size)
@@ -291,6 +323,16 @@ static inline int cursor_remaining_capacity(struct cursor *cursor)
 	return cursor->end - cursor->p;
 }
 
+static inline int cursor_push_hex(struct cursor *c, const void *buf, size_t bufsize)
+{
+	int size;
+	size = hex_encode(buf, bufsize, (char *)c->p, c->end - c->p);
+	if (!size)
+		return 0;
+	c->p += bufsize * 2;
+	return 1;
+}
+
 
 #define max(a,b) ((a) > (b) ? (a) : (b))
 static inline void cursor_print_around(struct cursor *cur, int range)
@@ -316,5 +358,29 @@ static inline void cursor_print_around(struct cursor *cur, int range)
 	printf("\n");
 }
 #undef max
+
+static inline int cursor_memset(struct cursor *cursor, unsigned char c, int n)
+{
+	if (cursor->p + n >= cursor->end)
+		return 0;
+
+	memset(cursor->p, c, n);
+	cursor->p += n;
+
+	return 1;
+}
+
+
+static inline int cursor_align(struct cursor *cur, int bytes) {
+	size_t size = cur->p - cur->start;
+	int pad;
+
+	// pad to n-byte alignment
+	pad = ((size + (bytes-1)) & ~(bytes-1)) - size;
+	if (pad > 0 && !cursor_memset(cur, 0, pad))
+		return 0;
+
+	return 1;
+}
 
 #endif

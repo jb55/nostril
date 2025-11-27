@@ -13,6 +13,7 @@
 
 #include "cursor.h"
 #include "hex.h"
+#include "nip44.h"
 #include "base64.h"
 #include "aes.h"
 #include "sha256.h"
@@ -30,6 +31,7 @@
 #define HAS_ENCRYPT (1<<4)
 #define HAS_DIFFICULTY (1<<5)
 #define HAS_MINE_PUBKEY (1<<6)
+#define HAS_GIFTWRAP (1<<7)
 
 struct key {
 	secp256k1_keypair pair;
@@ -79,6 +81,7 @@ void usage()
 	printf("\n");
 	printf("      --content <string>              the content of the note\n");
 	printf("      --dm <hex pubkey>               make an encrypted dm to said pubkey. sets kind and tags.\n");
+	printf("      --giftwrap-to <hex pubkey>      make an encrypted giftwrap to said pubkey.\n");
 	printf("      --envelope                      wrap in [\"EVENT\",...] for easy relaying\n");
 	printf("      --kind <number>                 set kind\n");
 	printf("      --created-at <unix timestamp>   set a specific created-at time\n");
@@ -313,13 +316,12 @@ static int init_secp_context(secp256k1_context **ctx)
 	return secp256k1_context_randomize(*ctx, randomize);
 }
 
-static int generate_event_id(struct nostr_event *ev)
+static int generate_event_id(struct nostr_event *ev,
+			     unsigned char *buf, size_t bufsize)
 {
-	static unsigned char buf[102400];
-
 	int len;
 
-	if (!(len = event_commitment(ev, buf, sizeof(buf)))) {
+	if (!(len = event_commitment(ev, buf, bufsize))) {
 		fprintf(stderr, "event_commitment: buffer out of space\n");
 		return 0;
 	}
@@ -339,45 +341,65 @@ static int sign_event(secp256k1_context *ctx, struct key *key, struct nostr_even
 	return 1;
 }
 
-static int print_event(struct nostr_event *ev, int envelope)
+static int all_zeros(unsigned char *buf, size_t bufsize)
 {
-	unsigned char buf[102400];
-	char pubkey[65];
-	char id[65];
-	char sig[129];
+	int i;
+
+	for (i = 0; i < bufsize; i++) {
+		if (buf[i] != 0)
+			return 0;
+	}
+
+	return 1;
+}
+
+static int event_to_json(struct cursor *c, struct nostr_event *ev, int envelope)
+{
+	char shortbuf[128];
+
+	if (envelope) {
+		if (!cursor_push_str(c, "[\"EVENT\","))
+			return 0;
+	}
+
+	if (!cursor_push_str(c, "{\"id\":\"")) return 0;
+	if (!cursor_push_hex(c, ev->id, 32)) return 0;
+	if (!cursor_push_str(c, "\",")) return 0;
+	if (!cursor_push_str(c, "\"pubkey\":\"")) return 0;
+	if (!cursor_push_hex(c, ev->pubkey, 32)) return 0;
+	if (!cursor_push_str(c, "\",")) return 0;
+	sprintf(shortbuf, "\"created_at\":%" PRIu64 ",", ev->created_at);
+	if (!cursor_push_str(c, shortbuf)) return 0;
+	sprintf(shortbuf, "\"kind\":%d,", ev->kind);
+	if (!cursor_push_str(c, shortbuf)) return 0;
+	if (!cursor_push_str(c, "\"tags\":")) return 0;
+	if (!cursor_push_tags(c, ev)) return 0;
+	if (!cursor_push_str(c, ",\"content\":")) return 0;
+	if (!cursor_push_jsonstr(c, ev->content)) return 0;
+
+	if (!all_zeros(ev->sig, 64)) {
+		if (!cursor_push_str(c,  ",\"sig\":\"")) return 0;
+		if (!cursor_push_hex(c,  ev->sig, 64)) return 0;
+		if (!cursor_push_byte(c, '"')) return 0;
+	}
+
+	if (envelope) {
+		if (!cursor_push_str(c, "]")) return 0;
+	}
+
+	return cursor_push_c_str(c, "}");
+}
+
+static int print_event(struct nostr_event *ev, int envelope,
+		       unsigned char *buf, size_t bufsize)
+{
 	struct cursor cur;
-	int ok;
+	make_cursor(buf, buf+bufsize, &cur);
 
-	ok = hex_encode(ev->id, sizeof(ev->id), id, sizeof(id)) &&
-	hex_encode(ev->pubkey, sizeof(ev->pubkey), pubkey, sizeof(pubkey)) &&
-	hex_encode(ev->sig, sizeof(ev->sig), sig, sizeof(sig));
-
-	assert(ok);
-
-	make_cursor(buf, buf+sizeof(buf), &cur);
-	if (!cursor_push_tags(&cur, ev))
+	if (!event_to_json(&cur, ev, envelope))
 		return 0;
 
-	if (envelope)
-		printf("[\"EVENT\",");
-
-	printf("{\"id\": \"%s\",", id);
-	printf("\"pubkey\": \"%s\",", pubkey);
-	printf("\"created_at\": %" PRIu64 ",", ev->created_at);
-	printf("\"kind\": %d,", ev->kind);
-	printf("\"tags\": %.*s,", (int)cursor_len(&cur), cur.start);
-
-	reset_cursor(&cur);
-	if (!cursor_push_jsonstr(&cur, ev->content))
-		return 0;
-
-	printf("\"content\": %.*s,", (int)cursor_len(&cur), cur.start);
-	printf("\"sig\": \"%s\"}", sig);
-
-	if (envelope)
-		printf("]");
-
-	printf("\n");
+	printf("%s\n", buf);
 
 	return 1;
 }
@@ -584,6 +606,13 @@ static int parse_args(int argc, const char *argv[], struct args *args, struct no
 		} else if (!strcmp(arg, "--content")) {
 			arg = *argv++; argc--;
 			args->content = arg;
+		} else if (!strcmp(arg, "--giftwrap-to")) {
+			arg = *argv++; argc--;
+			if (!hex_decode(arg, strlen(arg), args->encrypt_to, 32)) {
+				fprintf(stderr, "could not decode giftwrap-to pubkey");
+				return 0;
+			}
+			args->flags |= HAS_GIFTWRAP;
 		} else {
 			fprintf(stderr, "unexpected argument '%s'\n", arg);
 			return 0;
@@ -652,7 +681,8 @@ static int ensure_nonce_tag(struct nostr_event *ev, int target, int *index)
 	return nostr_add_tag_n(ev, ts, 3);
 }
 
-static int mine_event(struct nostr_event *ev, int difficulty)
+static int mine_event(struct nostr_event *ev, int difficulty,
+		      unsigned char *buf, size_t bufsize)
 {
 	char *strnonce = malloc(33);
 	struct nostr_tag *tag;
@@ -670,7 +700,7 @@ static int mine_event(struct nostr_event *ev, int difficulty)
 	for (nonce = 0;; nonce++) {
 		snprintf(strnonce, 32, "%" PRIu64, nonce);
 
-		if (!generate_event_id(ev))
+		if (!generate_event_id(ev, buf, bufsize))
 			return 0;
 
 		if ((res = count_leading_zero_bits(ev->id)) >= difficulty) {
@@ -680,6 +710,121 @@ static int mine_event(struct nostr_event *ev, int difficulty)
 	}
 
 	return 0;
+}
+
+static int make_giftwrap(secp256k1_context *ctx, struct key *key,
+		struct nostr_event *rumor, unsigned char receiver_pubkey[32],
+		unsigned char *buf, size_t bufsize,
+		int is_envelope)
+{
+	struct nostr_event giftwrap = {0};
+	struct nostr_event seal = {0};
+	struct key wrap_key;
+	char *b64, *json;
+	struct cursor arena, *c;
+	ssize_t b64_len;
+	enum ndb_decrypt_result ok;
+
+	c = &arena;
+	make_cursor(buf, buf+bufsize, c);
+	if (!fill_random(wrap_key.secret, sizeof(wrap_key.secret)))
+		return 0;
+	create_key(ctx, &wrap_key); /* giftwrap key */
+
+	memcpy(rumor->pubkey, key->pubkey, 32);
+	if (!generate_event_id(rumor, c->p, cursor_remaining_capacity(c)))
+		return 0;
+
+	/* rumor data */
+	json = (char*)c->p;
+	if (!event_to_json(c, rumor, 0))
+		return 0;
+
+	ok = nip44_encrypt(ctx, key->secret, receiver_pubkey,
+			   (unsigned char *)json, c->p - (unsigned char *)json-1,
+			   c->p, cursor_remaining_capacity(c),
+			   &b64, &b64_len);
+
+	if (ok != NIP44_OK) {
+		fprintf(stderr, "rumor nip44 encrypt failed: %s\n",
+				nip44_err_msg(ok));
+		return 0;
+	}
+	assert(b64_len % 4 == 0);
+	c->p = b64 + b64_len;
+	if (!cursor_push_byte(c, 0))
+		return 0;
+
+	fprintf(stderr, "rumor %s\n\n", json);
+
+	/* seal data */
+	seal.kind = 13;
+	seal.created_at = rumor->created_at;
+	seal.content = b64;
+	assert(strlen(b64) % 4 == 0);
+
+	memcpy(seal.pubkey, key->pubkey, 32);
+	if (!generate_event_id(&seal, c->p, cursor_remaining_capacity(c)))
+		return 0;
+	if (!sign_event(ctx, key, &seal))
+		return 0;
+
+	json = (char*)c->p;
+	if (!event_to_json(c, &seal, 0)) {
+		fprintf(stderr, "seal -> json failed, not enough space?\n");
+		return 0;
+	}
+	fprintf(stderr, "seal %.*s\n\n", (int)(c->p - (unsigned char*)json), json);
+
+	/* encrypt seal for giftwrap contents */
+	ok = nip44_encrypt(ctx, wrap_key.secret, receiver_pubkey,
+			  (unsigned char *)json, c->p - (unsigned char *)json - 1,
+			  c->p, cursor_remaining_capacity(c),
+			  &b64, &b64_len);
+
+	if (ok != NIP44_OK) {
+		fprintf(stderr, "seal nip44 encrypt failed: %s\n",
+				nip44_err_msg(ok));
+		return 0;
+	}
+
+	assert(b64_len % 4 == 0);
+	c->p = b64 + b64_len;
+	if (!cursor_push_byte(c, 0))
+		return 0;
+
+	giftwrap.content = b64;
+
+	/* giftwrap data */
+	json = (char*)c->p;
+	if (!cursor_push_hex(c, wrap_key.secret, 32)) {
+		fprintf(stderr, "buffer too small, bug jb55 to increase\n");
+		return 0;
+	}
+	fprintf(stderr, "giftwrap_sec %.*s\n\n", 64, json);
+
+	giftwrap.created_at = rumor->created_at;
+	giftwrap.kind = 1059;
+	memcpy(giftwrap.pubkey, wrap_key.pubkey, 32);
+
+	json = (char*)c->p;
+	cursor_push_hex(c, receiver_pubkey, 32);
+	cursor_push_byte(c, 0);
+	nostr_add_tag(&giftwrap, "p", json);
+
+	if (!generate_event_id(&giftwrap, c->p, cursor_remaining_capacity(c)))
+		return 0;
+
+	json = (char*)c->p;
+	if (!event_to_json(c, &giftwrap, is_envelope)) {
+		fprintf(stderr, "buffer too small, bug jb55 to increase\n");
+		return 0;
+	}
+
+	printf("%s\n", json);
+
+	free(buf);
+	return 1;
 }
 
 static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
@@ -707,7 +852,8 @@ static int make_encrypted_dm(secp256k1_context *ctx, struct key *key,
 		return 0;
 	}
 
-	if (!secp256k1_ec_pubkey_parse(ctx, &pubkey, compressed_pubkey, sizeof(compressed_pubkey))) {
+	if (!secp256k1_ec_pubkey_parse(ctx, &pubkey, compressed_pubkey,
+				       sizeof(compressed_pubkey))) {
 		fprintf(stderr, "make_encrypted_dm: ec_pubkey_parse failed\n");
 		return 0;
 	}
@@ -787,6 +933,8 @@ int main(int argc, const char *argv[])
 	struct args args = {0};
 	struct nostr_event ev = {0};
 	struct key key;
+	unsigned char *buf;
+	size_t bufsize;
         secp256k1_context *ctx;
 
 	if (argc < 2)
@@ -827,24 +975,35 @@ int main(int argc, const char *argv[])
 		fprintf(stderr, "\n");
 	}
 
+	/* 8 MiB */
+	bufsize = 2 << 22;
+	buf = malloc(bufsize);
+
 	if (args.flags & HAS_ENCRYPT) {
 		int kind = args.flags & HAS_KIND? args.kind : 4;
 		if (!make_encrypted_dm(ctx, &key, &ev, args.encrypt_to, kind)) {
 			fprintf(stderr, "error making encrypted dm\n");
-			return 0;
+			return 1;
 		}
+	} else if (args.flags & HAS_GIFTWRAP) {
+		if (!make_giftwrap(ctx, &key, &ev, args.encrypt_to,
+				   buf, bufsize, args.flags & HAS_ENVELOPE)) {
+			fprintf(stderr, "error making encrypted dm\n");
+			return 1;
+		}
+		return 0;
 	}
 
 	// set the event's pubkey
 	memcpy(ev.pubkey, key.pubkey, 32);
 
 	if (args.flags & HAS_DIFFICULTY && !(args.flags & HAS_MINE_PUBKEY)) {
-		if (!mine_event(&ev, args.difficulty)) {
+		if (!mine_event(&ev, args.difficulty, buf, bufsize)) {
 			fprintf(stderr, "error when mining id\n");
 			return 22;
 		}
 	} else {
-		if (!generate_event_id(&ev)) {
+		if (!generate_event_id(&ev, buf, bufsize)) {
 			fprintf(stderr, "could not generate event id\n");
 			return 5;
 		}
@@ -855,10 +1014,12 @@ int main(int argc, const char *argv[])
 		return 6;
 	}
 
-	if (!print_event(&ev, args.flags & HAS_ENVELOPE)) {
+	if (!print_event(&ev, args.flags & HAS_ENVELOPE, buf, bufsize)) {
 		fprintf(stderr, "buffer too small\n");
 		return 88;
 	}
+
+	free(buf);
 
 	return 0;
 }
