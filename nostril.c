@@ -814,6 +814,8 @@ static int make_giftwrap(secp256k1_context *ctx, struct key *key,
 
 	if (!generate_event_id(&giftwrap, c->p, cursor_remaining_capacity(c)))
 		return 0;
+	if (!sign_event(ctx, &wrap_key, &giftwrap))
+		return 0;
 
 	json = (char*)c->p;
 	if (!event_to_json(c, &giftwrap, is_envelope)) {
