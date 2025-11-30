@@ -24,6 +24,9 @@ nostril - generate nostr events
 *--envelope*
 	Wrap the event with `["EVENT", ... ]` for easy relaying
 
+*--giftwrap-to* <hex pubkey>
+	Wrap a note with a giftwrap to a specific pubkey
+
 *--kind* <number>
 	Set the kind of the note
 
