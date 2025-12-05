@@ -383,11 +383,13 @@ static int event_to_json(struct cursor *c, struct nostr_event *ev, int envelope)
 		if (!cursor_push_byte(c, '"')) return 0;
 	}
 
-	if (envelope) {
-		if (!cursor_push_str(c, "]")) return 0;
-	}
+	if (!cursor_push_str(c, "}")) return 0;
 
-	return cursor_push_c_str(c, "}");
+	if (envelope) {
+		return cursor_push_c_str(c, "]");
+	} else {
+		return cursor_push_byte(c, 0);
+	}
 }
 
 static int print_event(struct nostr_event *ev, int envelope,
