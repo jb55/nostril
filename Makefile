@@ -37,10 +37,14 @@ deps/libsodium/config.log: deps/libsodium/configure
 	cd deps/libsodium; \
 	./configure --disable-shared --enable-minimal
 
-deps/secp256k1/.git:
+deps/libsodium/.git deps/secp256k1/.git:
 	@devtools/refresh-submodules.sh $(SUBMODULES)
 
 deps/secp256k1/include/secp256k1.h: deps/secp256k1/.git
+
+deps/libsodium/configure: deps/libsodium/.git
+	cd deps/libsodium; \
+	./autogen.sh
 
 deps/secp256k1/configure: deps/secp256k1/.git
 	cd deps/secp256k1; \
