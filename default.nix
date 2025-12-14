@@ -9,5 +9,5 @@ stdenv.mkDerivation {
 
   makeFlags = [ "PREFIX=$(out)" ];
 
-  buildInputs = [ secp256k1 ];
+  nativeBuildInputs = [ autoconf automake gettext libtool getopt ];
 }

@@ -8,6 +8,9 @@ fi
 # If no git dir (or, if we're a submodule, git file), forget it.
 [ -e .git ] || exit 0
 
+# Exit early if git is not available (e.g. in nix builds)
+command -v git >/dev/null 2>&1 || exit 0
+
 # git submodule can't run in parallel.  Really.
 # Wait for it to finish if in parallel.
 if ! mkdir .refresh-submodules 2>/dev/null ; then
